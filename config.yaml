@@ -1,0 +1,10 @@
+photon:
+  network:
+    broadcast-port: 7500
+    receive-port: 7501
+database:
+  host: 127.0.0.1
+  port: 5432
+  user: <username here>
+  password: <insert password here>
+  db-name: photon
