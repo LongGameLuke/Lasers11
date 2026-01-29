@@ -31,3 +31,27 @@ class PhotonDB:
         except Exception as e:
             print(e)
             return False
+
+# Database Menu
+if __name__ == "__main__":
+    while True:
+        print("\nPhoton Database Menu")
+        print("=========================")
+        print("1 = Connect to database")
+        print("2 = Disconnect to database")
+        print("4 = Exit")
+        print("\nWhat to do?: ", end="")
+        try:
+            menu_choice:int = int(input())
+        except:
+            print("Try again.")
+            continue
+
+        if menu_choice == 1:
+            pass
+        elif menu_choice == 2:
+            pass
+        elif menu_choice == 4:
+            exit(1) 
+        else:
+            continue

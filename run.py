@@ -52,12 +52,13 @@ if __name__ == "__main__":
             host=config["database"]["host"],
             port=config["database"]["port"],
             user=config["database"]["user"],
-            password=config["database"]["password"]
+            password=config["database"]["password"],
+            dbname=config["database"]["db-name"]
             )
         db.connect_to_database()
         log_process_complete("Connected to database")
     except Exception as e:
-        log_process_error("Couldn't connect to postgresql database.")
+        log_process_error("Couldn't connect to postgresql database.", e)
         exit(-1)
 
     # TODO: Launch GUI
