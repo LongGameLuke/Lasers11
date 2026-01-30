@@ -37,7 +37,7 @@ def load_config(file_name:str) -> dict:
             exit(-1)
 
 
-def load_networking_sockets(config:dict):
+def load_network_sockets(config:dict):
     # Gather networking sockets
     try:
         broadcast_port = config["photon"]["network"]["broadcast-port"]
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     # Load config
     config:dict = load_config(CONFIG_FILE)
 
-    # Load networking ports from config
-    ports = load_networking_sockets(config)
+    # Load network ports from config
+    ports = load_network_sockets(config)
 
     # Load database connection
     db = load_database(config)
