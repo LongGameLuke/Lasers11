@@ -1,6 +1,7 @@
 import yaml
 from typing import Union
 from modules.photondb import PhotonDB
+from modules.photongame import PhotonGame
 from modules.consolelog import *
 
 CONFIG_FILE = "config.yaml"
@@ -22,29 +23,35 @@ def start_message() -> None:
     print("\t\tLuke Fletcher")
     print("========================================\n")
 
+
 def load_config(file_name:str) -> dict:
     # Load yaml data
     with open(file_name, "r") as file:
         try:
-            data = yaml.safe_load(file)
-            return data
+            log_process_start("Loading config")
+            config:dict = yaml.safe_load(file)
+            log_process_complete("Loaded config")
+            return config
         except Exception as e:
-            raise e
+            log_process_error("Couldn't load config. Check file integrity.", error=e)
+            exit(-1)
 
-if __name__ == "__main__":
-    # Display welcome message to user on command line
-    start_message()
 
-    # Load config
-    config:Union[None, dict] = None
+def load_networking_sockets(config:dict):
+    # Gather networking sockets
     try:
-        log_process_start("Loading config")
-        config = load_config(CONFIG_FILE)
-        log_process_complete("Loaded config")
+        broadcast_port = config["photon"]["network"]["broadcast-port"]
+        receive_port = config["photon"]["network"]["receive-port"]
+        ports:dict = {
+            'broadcast': broadcast_port,
+            'receive': receive_port
+        }
     except Exception as e:
-        log_process_error("Couldn't load config. Check file integrity.", error=e)
+        log_process_error("Couldn't get networking ports. Check file integrity.", error=e)
         exit(-1)
 
+
+def load_database(config:dict):
     # Connect to the postgresql database
     try:
         log_process_start("Connecting to database")
@@ -57,11 +64,29 @@ if __name__ == "__main__":
             )
         db.connect_to_database()
         log_process_complete("Connected to database")
+        return db
     except Exception as e:
         log_process_error("Couldn't connect to postgresql database.", e)
         exit(-1)
 
-    # TODO: Launch GUI
+
+if __name__ == "__main__":
+    # Display welcome message to user on command line
+    start_message()
+
+    # Load config
+    config:dict = load_config(CONFIG_FILE)
+
+    # Load networking ports from config
+    ports = load_networking_sockets(config)
+
+    # Load database connection
+    db = load_database(config)
+
+    # Create game using initialized data
+    game = PhotonGame(db, ports)
+    
+    # TODO - MAIN LOOP WILL EXIST HERE
 
     # Wait for input and close program
     print("\nPress ENTER to close program.", end="")
