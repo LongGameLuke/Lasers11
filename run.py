@@ -66,4 +66,6 @@ if __name__ == "__main__":
     # Wait for input and close program
     print("\nPress ENTER to close program.", end="")
     input()
+
+    db.disconnect_from_db()
     exit(1)

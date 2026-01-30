@@ -5,6 +5,6 @@ photon:
 database:
   host: 127.0.0.1
   port: 5432
-  user: <username here> # !IMPORTANT change for production
-  password: <password here> # !IMPORTANT change for production
+  user: student # !IMPORTANT change in production
+  password: student # !IMPORTANT change in production
   db-name: photon
