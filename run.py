@@ -38,7 +38,7 @@ def load_config(file_name:str) -> dict:
             exit(-1)
 
 
-def load_network_sockets(config:dict):
+def load_network_sockets(config:dict) -> dict:
     # Gather networking sockets
     try:
         log_process_start("Loading network ports")
@@ -49,12 +49,13 @@ def load_network_sockets(config:dict):
             'receive': receive_port
         }
         log_process_complete("Loaded network ports")
+        return ports
     except Exception as e:
         log_process_error("Couldn't get networking ports. Check file integrity.", error=e)
         exit(-1)
 
 
-def load_database(config:dict):
+def load_database(config:dict) -> PhotonDB:
     # Connect to the postgresql database
     try:
         log_process_start("Connecting to database")
