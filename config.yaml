@@ -1,5 +1,6 @@
 photon:
   network:
+    host: 127.0.0.1
     broadcast-port: 7500
     receive-port: 7501
 database:

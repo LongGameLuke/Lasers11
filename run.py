@@ -3,6 +3,7 @@ from typing import Union
 from modules.photondb import PhotonDB
 from modules.photongame import PhotonGame
 from modules.consolelog import *
+from modules.photonserver import PhotonServer
 
 CONFIG_FILE = "config.yaml"
 
@@ -40,12 +41,14 @@ def load_config(file_name:str) -> dict:
 def load_network_sockets(config:dict):
     # Gather networking sockets
     try:
+        log_process_start("Loading network ports")
         broadcast_port = config["photon"]["network"]["broadcast-port"]
         receive_port = config["photon"]["network"]["receive-port"]
         ports:dict = {
             'broadcast': broadcast_port,
             'receive': receive_port
         }
+        log_process_complete("Loaded network ports")
     except Exception as e:
         log_process_error("Couldn't get networking ports. Check file integrity.", error=e)
         exit(-1)
@@ -82,9 +85,14 @@ if __name__ == "__main__":
 
     # Load database connection
     db = load_database(config)
+    
+    # Create game server
+    log_process_start("Creating game server")
+    server = PhotonServer(config["photon"]["network"]["host"], config["photon"]["network"]["broadcast-port"])
+    log_process_complete("Created game server")
 
     # Create game using initialized data
-    game = PhotonGame(db, ports)
+    game = PhotonGame(db, server)
     
     # TODO - MAIN LOOP WILL EXIST HERE
 
