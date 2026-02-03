@@ -91,6 +91,9 @@ if __name__ == "__main__":
     log_process_start("Creating game server")
     server = PhotonServer(config["photon"]["network"]["host"], ports)
     log_process_complete("Created game server")
+    print("\n")
+    log_process(f"Server listening on port {ports['receive']}/udp")
+    log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
 
     # Create game using initialized data
     game = PhotonGame(db, server)
