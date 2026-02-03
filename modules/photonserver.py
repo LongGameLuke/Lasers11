@@ -1,9 +1,10 @@
 import socket
 
 class PhotonServer:
-    def __init__(self, host:str, port:int):
+    def __init__(self, host:str, ports:dict):
         self.host = host
-        self.port = port
+        self.broadcast_port = ports["broadcast"]
+        self.receive_port = ports["receive"]
         self.bufferSize = 1024
         self.msgFromServer = "Hello UDP Client"
         self.bytesToSend = str.encode(self.msgFromServer)
@@ -12,7 +13,7 @@ class PhotonServer:
         self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
         # Bind to address and ip
-        self.udp_server_socket.bind((self.host, self.port))
+        self.udp_server_socket.bind((self.host, self.receive_port))
 
     def reply_to_client(self, reply_address:str):
         # Sends a reply to client address

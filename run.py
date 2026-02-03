@@ -89,7 +89,7 @@ if __name__ == "__main__":
     
     # Create game server
     log_process_start("Creating game server")
-    server = PhotonServer(config["photon"]["network"]["host"], config["photon"]["network"]["broadcast-port"])
+    server = PhotonServer(config["photon"]["network"]["host"], ports)
     log_process_complete("Created game server")
 
     # Create game using initialized data
