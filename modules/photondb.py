@@ -51,14 +51,14 @@ class PhotonDB:
 
     def add_player(self, pid:int, player_name:str) -> bool:
         # Check if pid exists. If not, add player into database
-        pid_test = get_player_by_pid(pid)
-        if len(pid_test) >= 1:
-            print(f"\nPlayer with PID({pid}) already exists")
-            return False
-        else:
+        pid_test = self.get_player_by_pid(pid)
+        if pid_test == None or len(pid_test) != 1:
             self.cur.execute("INSERT into players(id, codename) VALUES (%s, %s)", (pid, player_name))
             self.conn.commit()
             return True
+        else:
+            print(f"\nPlayer with PID({pid}) already exists")
+            return False
 
     def remove_player(self, pid:int) -> bool:
         # Check if pid exists. If so, remove the entry
