@@ -23,7 +23,7 @@ source env/bin/activate
 
 ### 3. Install python dependencies
 ```bash
-# Install requirements.txt
+# Install dependencies from requirements.txt
 pip install -r requirements.txt
 ```
 
