@@ -15,7 +15,7 @@ class PhotonServer:
         # Bind to address and ip
         self.udp_server_socket.bind((self.host, self.receive_port))
 
-    def reply_to_client(self, reply_address:str):
+    def send_message(self, reply_address:str):
         # Sends a reply to client address
         self.udp_server_socket.sendto(self.bytesToSend, reply_address)
 
@@ -27,4 +27,4 @@ class PhotonServer:
         clientIP  = "Client IP Address:{}".format(address)
 
         print(f"{clientIP}: {clientMsg}")
-        self.reply_to_client(address)
+        self.send_message(address)
