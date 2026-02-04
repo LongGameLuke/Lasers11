@@ -12,30 +12,18 @@ git clone https://github.com/LongGameLuke/Lasers11.git
 cd Lasers11/
 ```
 
-### 2. Install the python virtual environment
-```bash
-# Create the virtual environment
-python3 -m venv env
-
-# Switch to virtual environment
-source env/bin/activate
-```
-
-### 3. Install python dependencies
+### 2. Install python dependencies
 ```bash
 # Install dependencies from requirements.txt
 pip install -r requirements.txt
+
+# TROUBLESHOOTING
+# If pip is not installed do the following and try the above again
+sudo apt update && sudo apt install pip
 ```
 
-### 4. Run the program
+### 3. Run the program
 ```bash
 # Run python script
 python3 run.py
-```
-
-### After running
-If you want to disconnect from the python virtual environment and return to your regular terminal do the following:
-```bash
-# Disconect from the python virtual environment
-deactivate
 ```
