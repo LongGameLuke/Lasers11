@@ -4,6 +4,7 @@ from modules.photondb import PhotonDB
 from modules.photongame import PhotonGame
 from modules.consolelog import *
 from modules.photonserver import PhotonServer
+from time import sleep
 
 CONFIG_FILE = "config.yaml"
 
@@ -94,15 +95,25 @@ if __name__ == "__main__":
     print("\n")
     log_process(f"Server listening on port {ports['receive']}/udp")
     log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
+    print("\nPress Ctrl+c to exit program.\n")
 
     # Create game using initialized data
     game = PhotonGame(db, server)
+
+    # TEMPORARY - start game after 1 second delay
+    sleep(1)
+    server.start_game()
+
+    # Main program loop
+    keep_running = True
+    while keep_running:
+        try:
+            game.update()
+            sleep(1)
+        except KeyboardInterrupt:
+            keep_running = False
     
-    # TODO - MAIN LOOP WILL EXIST HERE
-
-    # Wait for input and close program
-    print("\nPress ENTER to close program.", end="")
-    input()
-
+    # Exit program after loop broken with Ctrl+c
     db.disconnect_from_db()
+    print("\n\nGoodbye.")
     exit(1)

@@ -8,4 +8,4 @@ class PhotonGame:
         self.server = server
     
     def update(self):
-        pass
+        self.server.update()
