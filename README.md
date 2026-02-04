@@ -12,18 +12,22 @@ git clone https://github.com/LongGameLuke/Lasers11.git
 cd Lasers11/
 ```
 
-### 2. Install python dependencies
+### 2. Run the program
 ```bash
+# Run script with sudo.
+# Sudo is required for the event where pip needs to be installed
+sudo ./run.sh
+```
+
+## Troubleshooting
+In the event the auto install and run script doesn't work, you can perform the steps below manually.
+```bash
+# Make sure pip is installed
+sudo apt update && sudo apt install pip
+
 # Install dependencies from requirements.txt
 pip install -r requirements.txt
 
-# TROUBLESHOOTING
-# If pip is not installed do the following and try the above again
-sudo apt update && sudo apt install pip
-```
-
-### 3. Run the program
-```bash
-# Run python script
+# Run program
 python3 run.py
 ```
