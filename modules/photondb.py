@@ -52,9 +52,10 @@ class PhotonDB:
     def add_player(self, pid:int, player_name:str) -> bool:
         # Check if pid exists. If not, add player into database
         pid_test = self.get_player_by_pid(pid)
-        if pid_test == None or len(pid_test) != 1:
+        if pid_test == None:
             self.cur.execute("INSERT into players(id, codename) VALUES (%s, %s)", (pid, player_name))
             self.conn.commit()
+            print(f"\nAdded {player_name} to database with id: {pid}")
             return True
         else:
             print(f"\nPlayer with PID({pid}) already exists")
@@ -63,9 +64,10 @@ class PhotonDB:
     def remove_player(self, pid:int) -> bool:
         # Check if pid exists. If so, remove the entry
         pid_test = self.get_player_by_pid(pid)
-        if len(pid_test) >= 1:
+        if pid_test != None and len(pid_test) >= 1:
             self.cur.execute("DELETE FROM players WHERE id = %s", (pid,))
             self.conn.commit()
+            print(f"\nRemoved player from database with id: {pid}")
             return True
         else:
             print(f"\nCouldn't find player with PID: {pid}")
@@ -123,12 +125,10 @@ if __name__ == "__main__":
             pid = int(input("PID: "))
             player_name = input("Player Name: ")
             db.add_player(pid, player_name)
-            print(f"\nAdded {player_name} to database")
         elif menu_choice == 6:
             # Remove player from database
             pid = int(input("PID: "))
             db.remove_player(pid)
-            print(f"\nRemoved PID:{pid} from database")
         elif menu_choice == 7:
             # Exit program
             exit(1) 
