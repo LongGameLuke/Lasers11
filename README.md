@@ -12,11 +12,17 @@ git clone https://github.com/LongGameLuke/Lasers11.git
 cd Lasers11/
 ```
 
-### 2. Run the program
+### 2. Install Dependencies
 ```bash
-# Run script with sudo.
-# Sudo is required for the event where pip needs to be installed
-sudo ./run.sh
+# Install the required dependencies
+sudo ./install.sh
+# This script will launch the Photon Laser Tag program after installing
+```
+
+### 3. Running the Program
+```bash
+# After installing the first time, you can run the program regularly with:
+python3 run.py
 ```
 
 ## Troubleshooting
