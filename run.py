@@ -27,7 +27,7 @@ def start_message() -> None:
 
 
 def load_config(file_name:str) -> dict:
-    # Load yaml data
+    # Load yaml data and return as a dict
     with open(file_name, "r") as file:
         try:
             log_process_start("Loading config")
@@ -40,7 +40,7 @@ def load_config(file_name:str) -> dict:
 
 
 def load_network_sockets(config:dict) -> dict:
-    # Gather networking sockets
+    # Gather network sockets and return as a dict
     try:
         log_process_start("Loading network ports")
         broadcast_port = config["photon"]["network"]["broadcast-port"]
