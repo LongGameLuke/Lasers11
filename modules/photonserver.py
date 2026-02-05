@@ -1,5 +1,6 @@
 import socket
 from enum import Enum
+from modules.consolelog import *
 
 class SERVER_CODES(Enum):
     START = "202"
@@ -33,12 +34,14 @@ class PhotonServer:
     
     def start_game(self) -> None:
         # Send the start game code to clients
+        log_process("Starting new game")
         start_code = str.encode(SERVER_CODES.START.value)
         self.game_in_progress = True
         self.udp_server_socket.sendto(start_code, (self.host, self.broadcast_port))
 
     def end_game(self) -> None:
         # Send the end game code to clients 3 times
+        log_process("Ending current game")
         end_code = str.encode(SERVER_CODES.END.value)
         for i in range(3):
             self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
@@ -52,17 +55,16 @@ class PhotonServer:
     def update(self) -> None:
         # Update that runs every time the game updates
         bytesAddressPair = self.udp_server_socket.recvfrom(self.bufferSize)
-        message = bytesAddressPair[0]
+        message = (bytesAddressPair[0]).decode()
         address = bytesAddressPair[1]
-        clientMsg = f"Message from Client:{message}"
-        clientIP  = f"Client IP Address:{address}"
+        clientMsg = f"Message from Client: {message}"
+        clientIP  = f"Client IP Address: {address}"
 
         print(f"{clientIP}: {clientMsg}")
 
         self.players_tagged += 1
-        clientMsg = clientMsg.strip("'")
-        hit_equipment = clientMsg.split(":")
-        self.broadcast_message(hit_equipment[2])
+        hit_equipment = message.split(":")
+        self.broadcast_message(hit_equipment[1])
 
         if self.players_tagged >= 6:
             self.end_game()
