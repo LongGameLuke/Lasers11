@@ -108,12 +108,11 @@ if __name__ == "__main__":
     keep_running = True
     while keep_running:
         try:
-            game.update()
-            sleep(1)
+            keep_running = game.update()
         except KeyboardInterrupt:
             keep_running = False
     
-    # Exit program after loop broken with Ctrl+c
+    # Exit program after loop broken
     db.disconnect_from_db()
     print("\n\nGoodbye.")
     exit(1)
