@@ -5,9 +5,9 @@ from modules.photonserver import TEAMS
 class PhotonUI:
     def __init__(self):
         pygame.init()
-        self.width, self.height = 800, 600
+        self.width, self.height = 1280, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Photon Laser Tag - Player Entry")
+        pygame.display.set_caption("Photon Laser Tag")
         
         self.colors = {
             "background": (0, 0, 0),
@@ -42,7 +42,7 @@ class PhotonUI:
             return
             
         # Scale logo for splash screen
-        splash_logo = pygame.transform.scale(self.original_logo, (400, 400))
+        splash_logo = pygame.transform.scale(self.original_logo, (871, 555))
         logo_rect = splash_logo.get_rect(center=(self.width // 2, self.height // 2))
         
         clock = pygame.time.Clock()
