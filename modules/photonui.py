@@ -1,6 +1,5 @@
 import pygame
 import sys
-from modules.photonserver import TEAMS
 
 class PhotonUI:
     def __init__(self):

@@ -1,5 +1,3 @@
-from modules.photonserver import TEAMS
-
 class Player:
     def __init__(self):
         # player identity info
