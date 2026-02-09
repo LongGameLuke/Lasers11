@@ -10,15 +10,10 @@ class PhotonGame:
         self.db = db
         self.server = server
         self.ui = PhotonUI()
-        self.players = {
-            "red-team" : [],
-            "green-team": []
-        }
         
         # Start player entry screen
         self.red_players, self.green_players = self.ui.run_player_entry()
-        # ^ This doesn't make any sense. You're rendering the player entry screen twice.
-        # Also the variables names make no sense.
+        # ^ This should not be handled by the UI
     
     def update(self) -> bool:
         self.server.update()

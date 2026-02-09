@@ -8,5 +8,5 @@ class Player:
         self.equipment_id:int = -1
 
         # game status info
-        self.team:TEAMS = NONE
+        self.team = ""
         self.score = 0
