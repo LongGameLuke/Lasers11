@@ -2,11 +2,6 @@ import socket
 from enum import Enum
 from modules.consolelog import *
 
-class TEAMS(Enum):
-    NONE = ""
-    GREEN = "Green"
-    RED = "Red"
-
 class SERVER_CODES(Enum):
     START = "202"
     END = "221"

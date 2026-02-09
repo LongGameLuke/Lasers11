@@ -1,6 +1,7 @@
 from modules.photondb import PhotonDB
 from modules.photonserver import PhotonServer
 from modules.photonui import PhotonUI
+from modules.player import Player
 from time import sleep
 
 class PhotonGame:
@@ -9,9 +10,15 @@ class PhotonGame:
         self.db = db
         self.server = server
         self.ui = PhotonUI()
+        self.players = {
+            "red-team" : [],
+            "green-team": []
+        }
         
         # Start player entry screen
         self.red_players, self.green_players = self.ui.run_player_entry()
+        # ^ This doesn't make any sense. You're rendering the player entry screen twice.
+        # Also the variables names make no sense.
     
     def update(self) -> bool:
         self.server.update()
@@ -19,3 +26,10 @@ class PhotonGame:
 
         # Keep game running
         return True
+
+    def start_game(self):
+        # Starts the game when called
+        self.server.start_game()
+
+    def add_new_player(team:str):
+        pass
