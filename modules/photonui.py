@@ -169,8 +169,10 @@ class PlayerEntry(Scene):
 
     def render(self):
         self.screen.fill(BACKGROUND)
-        self.draw_text("RED TEAM", self.header_font, RED, SCREEN_WIDTH//4, 50, center=True)
-        self.draw_text("GREEN TEAM", self.header_font, GREEN, 3*SCREEN_WIDTH//4, 50, center=True)
+        self.draw_text("RED TEAM", self.header_font, RED, 
+                        SCREEN_WIDTH//4, 50, center=True)
+        self.draw_text("GREEN TEAM", self.header_font, GREEN, 
+                        3*SCREEN_WIDTH//4, 50, center=True)
         
         cols = ["Player ID", "Code Name", "Equip ID"]
         for i, text in enumerate(cols):
@@ -198,7 +200,8 @@ class PlayerEntry(Scene):
                 if val:
                     self.draw_text(val, self.font, WHITE, x + 5, y + 5)
 
-        self.draw_text("Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 30, center=True)
+        self.draw_text("Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
+                        self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 30, center=True)
 
     def draw_text(self, text, font, color, x, y, center=False):
         surf = font.render(str(text), True, color)
