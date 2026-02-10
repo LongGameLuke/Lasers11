@@ -1,158 +1,248 @@
 import pygame
 import sys
+import time
+import os
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+BACKGROUND = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (139, 0, 0)
+GREEN = (0, 100, 0)
+YELLOW = (255, 255, 0)
+GRAY = (100, 100, 100)
+
+FONT_SIZE = 24
+HEADER_SIZE = 36
+GRID_START_Y = 120
+ROW_HEIGHT = 30
+COL_WIDTH = 140
+
+class Scene:
+    def __init__(self, manager):
+        self.manager = manager
+        self.game = manager.game
+        self.screen = manager.screen
+
+    def enter(self):
+        pass
+
+    def exit(self):
+        pass
+
+    def handle_events(self, events):
+        pass
+
+    def update(self):
+        pass
+
+    def render(self):
+        pass
+
+class SceneManager:
+    def __init__(self, game, screen):
+        self.game = game
+        self.screen = screen
+        self.scenes = {}
+        self.current_scene = None
+
+    def add(self, name, scene_cls):
+        self.scenes[name] = scene_cls(self)
+
+    def switch(self, name):
+        if self.current_scene:
+            self.current_scene.exit()
+        self.current_scene = self.scenes.get(name)
+        if self.current_scene:
+            self.current_scene.enter()
+
+class SplashScreen(Scene):
+    def enter(self):
+        self.start_time = time.time()
+        self.font = pygame.font.SysFont("Arial", HEADER_SIZE)
+        
+        self.image = None
+        img = pygame.image.load("images/logo.jpg")
+        self.image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        
+    def update(self):
+        if time.time() - self.start_time > 3:
+            self.manager.switch("PLAYER_ENTRY")
+
+    def render(self):
+        self.screen.fill(BACKGROUND)
+        self.screen.blit(self.image, (0, 0))
+
+class PlayerEntry(Scene):
+    def enter(self):
+        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.header_font = pygame.font.SysFont("Arial", HEADER_SIZE)
+        
+        # Initialize grid data if not already present (preserves data if returning)
+        if not hasattr(self, 'entries'):
+            # 30 rows, 3 columns: [PlayerID, CodeName, EquipID]
+            self.entries = [[ "", "", "" ] for _ in range(30)]
+            self.current_row = 0
+            self.current_col = 0 # 0:ID, 1:Name, 2:Equip
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F5:
+                    self.game.start_game()
+                    self.manager.switch("GAME_ACTION")
+                elif event.key == pygame.K_F12:
+                    self.clear_entries()
+                    self.game.clear_players()
+                elif event.key in [pygame.K_RETURN]:
+                    self.process_input()
+                elif event.key == pygame.K_BACKSPACE:
+                    curr_val = self.entries[self.current_row][self.current_col]
+                    self.entries[self.current_row][self.current_col] = curr_val[:-1]
+                
+                # Arrowkeys navigation
+                elif event.key == pygame.K_UP:
+                    self.current_row = max(0, self.current_row - 1)
+                elif event.key == pygame.K_DOWN:
+                    self.current_row = min(29, self.current_row + 1)
+                elif event.key == pygame.K_LEFT:
+                    self.current_col = max(0, self.current_col - 1)
+                elif event.key == pygame.K_RIGHT:
+                    self.current_col = min(2, self.current_col + 1)
+                
+                else:
+                    if event.unicode.isprintable():
+                        self.entries[self.current_row][self.current_col] += event.unicode
+
+    def process_input(self):
+        row = self.current_row
+        col = self.current_col
+        val = self.entries[row][col].strip()
+
+        # 1. Player ID Field
+        if col == 0:
+            if val.isdigit():
+                # Query DB for existing player
+                try:
+                    player = self.game.db.get_player_by_pid(int(val))
+                    if player:
+                        # Found: Fill name, skip to Equip ID
+                        self.entries[row][1] = player[1] 
+                        self.current_col = 2 
+                    else:
+                        # Not found: Move to Name field
+                        self.current_col = 1
+                except:
+                    # DB error or invalid, move to Name safely
+                    self.current_col = 1
+            else:
+                if val: self.current_col = 1
+
+        # 2. Name Field
+        elif col == 1:
+            if val:
+                self.current_col = 2 # Move to equipment id
+
+        # 3. Equipment ID Field (Finalize Row)
+        elif col == 2:
+            if val.isdigit():
+                pid_str = self.entries[row][0]
+                name_str = self.entries[row][1]
+                
+                if pid_str and name_str:
+                    team = "Red" if row < 15 else "Green"
+                    try:
+                        self.game.add_new_player(int(pid_str), name_str, int(val), team)
+                        print(f"Added Player: {name_str} ({team})")
+                    except Exception as e:
+                        print(f"Error adding player: {e}")
+                    
+                    # Advance to next row
+                    if self.current_row < 29:
+                        self.current_row += 1
+                        self.current_col = 0
+
+    def clear_entries(self):
+        self.entries = [[ "", "", "" ] for _ in range(30)]
+        self.current_row = 0
+        self.current_col = 0
+
+    def render(self):
+        self.screen.fill(BACKGROUND)
+        self.draw_text("RED TEAM", self.header_font, RED, SCREEN_WIDTH//4, 50, center=True)
+        self.draw_text("GREEN TEAM", self.header_font, GREEN, 3*SCREEN_WIDTH//4, 50, center=True)
+        
+        cols = ["Player ID", "Code Name", "Equip ID"]
+        for i, text in enumerate(cols):
+            self.draw_text(text, self.font, WHITE, 150 + i*150, 90)
+            self.draw_text(text, self.font, WHITE, 790 + i*150, 90)
+
+        for r in range(30):
+            is_green = r >= 15
+            display_r = r - 15 if is_green else r
+            base_x = 750 if is_green else 110
+            y = GRID_START_Y + display_r * ROW_HEIGHT
+            self.draw_text(f"{display_r + 1:2}", self.font, GRAY, base_x - 35, y + 5)
+            
+            for c in range(3):
+                x = base_x + c * 150
+                rect = pygame.Rect(x, y, COL_WIDTH, 25)
+                
+                # Focus on current selection
+                if r == self.current_row and c == self.current_col:
+                    pygame.draw.rect(self.screen, YELLOW, rect, 2)
+                else:
+                    pygame.draw.rect(self.screen, GRAY, rect, 1)
+                
+                val = self.entries[r][c]
+                if val:
+                    self.draw_text(val, self.font, WHITE, x + 5, y + 5)
+
+        self.draw_text("Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 30, center=True)
+
+    def draw_text(self, text, font, color, x, y, center=False):
+        surf = font.render(str(text), True, color)
+        rect = surf.get_rect()
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+        self.screen.blit(surf, rect)
+
+class GameAction(Scene):
+    def enter(self):
+        pass
 
 class PhotonUI:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         pygame.init()
-        self.width, self.height = 1280, 720
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Photon Laser Tag")
-        
-        self.colors = {
-            "background": (0, 0, 0),
-            "red_team": (139, 0, 0),
-            "green_team": (0, 100, 0),
-            "text": (255, 255, 255),
-            "input_box": (50, 50, 50),
-            "active_box": (100, 100, 100)
-        }
-        
-        self.font = pygame.font.SysFont("Arial", 24)
-        self.title_font = pygame.font.SysFont("Arial", 48, bold=True)
-        
-        # Load logo
-        try:
-            self.original_logo = pygame.image.load("images/logo.jpg")
-            self.logo = pygame.transform.scale(self.original_logo, (100, 100))
-        except:
-            self.original_logo = None
-            self.logo = None
-        
-        self.splash_shown = False
-        
-        # Player entry data
-        self.red_players = [{"id": "", "name": ""} for _ in range(15)]
-        self.green_players = [{"id": "", "name": ""} for _ in range(15)]
-        
-        self.active_input = None # (team, index, field) where field is 'id' or 'name'
-        
-    def show_splash_screen(self):
-        if not self.original_logo or self.splash_shown:
-            return
-            
-        # Scale logo for splash screen
-        splash_logo = pygame.transform.scale(self.original_logo, (871, 555))
-        logo_rect = splash_logo.get_rect(center=(self.width // 2, self.height // 2))
-        
+
+        self.scene_manager = SceneManager(game, self.screen)
+        self.scene_manager.add("SPLASH", SplashScreen)
+        self.scene_manager.add("PLAYER_ENTRY", PlayerEntry)
+        self.scene_manager.add("GAME_ACTION", GameAction)
+        self.scene_manager.switch("SPLASH")
+
+    def run(self):
         clock = pygame.time.Clock()
-        start_time = pygame.time.get_ticks()
-        while pygame.time.get_ticks() - start_time < 3000: # 3 seconds
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            
-            self.screen.fill(self.colors["background"])
-            self.screen.blit(splash_logo, logo_rect)
-            pygame.display.flip()
-            clock.tick(60)
-        
-        self.splash_shown = True
-
-    def draw_text(self, text, font, color, x, y):
-        img = font.render(text, True, color)
-        self.screen.blit(img, (x, y))
-
-    def run_player_entry(self):
-        if not self.splash_shown:
-            self.show_splash_screen()
-
         running = True
+        
         while running:
-            self.screen.fill(self.colors["background"])
-            
-            # Draw Title
-            self.draw_text("PLAYER ENTRY", self.title_font, self.colors["text"], self.width//2 - 150, 20)
-            
-            if self.logo:
-                self.screen.blit(self.logo, (10, 10))
-            
-            # Draw Column Headers
-            self.draw_text("RED TEAM", self.font, self.colors["red_team"], 150, 80)
-            self.draw_text("GREEN TEAM", self.font, self.colors["green_team"], 550, 80)
-            
-            # Draw Instructions
-            self.draw_text("F5 - Start Game", self.font, self.colors["text"], self.width//2 - 150, 575)
-            
-            # Draw Input Boxes
-            for i in range(15):
-                # Red Team ID and Name
-                y_pos = 120 + i * 30
-                
-                # Red ID
-                color = self.colors["active_box"] if self.active_input == ("red", i, "id") else self.colors["input_box"]
-                pygame.draw.rect(self.screen, color, (50, y_pos, 80, 25))
-                self.draw_text(self.red_players[i]["id"], self.font, self.colors["text"], 55, y_pos)
-                
-                # Red Name
-                color = self.colors["active_box"] if self.active_input == ("red", i, "name") else self.colors["input_box"]
-                pygame.draw.rect(self.screen, color, (140, y_pos, 200, 25))
-                self.draw_text(self.red_players[i]["name"], self.font, self.colors["text"], 145, y_pos)
-                
-                # Green ID
-                color = self.colors["active_box"] if self.active_input == ("green", i, "id") else self.colors["input_box"]
-                pygame.draw.rect(self.screen, color, (450, y_pos, 80, 25))
-                self.draw_text(self.green_players[i]["id"], self.font, self.colors["text"], 455, y_pos)
-                
-                # Green Name
-                color = self.colors["active_box"] if self.active_input == ("green", i, "name") else self.colors["input_box"]
-                pygame.draw.rect(self.screen, color, (540, y_pos, 200, 25))
-                self.draw_text(self.green_players[i]["name"], self.font, self.colors["text"], 545, y_pos)
-
-            pygame.display.flip()
-            
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
-                    sys.exit()
-                
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Check which box was clicked
-                    mouse_pos = pygame.mouse.get_pos()
-                    self.active_input = None
-                    for i in range(15):
-                        # Red ID box
-                        if pygame.Rect(50, 120 + i * 30, 80, 25).collidepoint(mouse_pos):
-                            self.active_input = ("red", i, "id")
-                        # Red Name box
-                        elif pygame.Rect(140, 120 + i * 30, 200, 25).collidepoint(mouse_pos):
-                            self.active_input = ("red", i, "name")
-                        # Green ID box
-                        elif pygame.Rect(450, 120 + i * 30, 80, 25).collidepoint(mouse_pos):
-                            self.active_input = ("green", i, "id")
-                        # Green Name box
-                        elif pygame.Rect(540, 120 + i * 30, 200, 25).collidepoint(mouse_pos):
-                            self.active_input = ("green", i, "name")
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_F5: # Start game
-                        running = False
-                    
-                    if self.active_input:
-                        team, idx, field = self.active_input
-                        player_list = self.red_players if team == "red" else self.green_players
-                        
-                        if event.key == pygame.K_BACKSPACE:
-                            player_list[idx][field] = player_list[idx][field][:-1]
-                        elif event.key == pygame.K_RETURN:
-                            self.active_input = None
-                        else:
-                            if len(player_list[idx][field]) < 15:
-                                player_list[idx][field] += event.unicode
-
-        return self.red_players, self.green_players
-
-if __name__ == "__main__":
-    ui = PhotonUI()
-    ui.run_player_entry()
+            
+            if self.scene_manager.current_scene:
+                self.scene_manager.current_scene.handle_events(events)
+                self.scene_manager.current_scene.update()
+                self.scene_manager.current_scene.render()
+            
+            pygame.display.flip()
+            clock.tick(30)
+        
+        pygame.quit()
+        sys.exit()

@@ -40,6 +40,8 @@ class PhotonServer:
         for player in self.players:
             player.score = 0
 
+        print(f"STARTING GAME with {len(self.players)} players!")
+
         # Send the start game code to clients
         log_process("Starting new game")
         start_code = str.encode(SERVER_CODES.START.value)

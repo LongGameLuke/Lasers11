@@ -9,11 +9,10 @@ class PhotonGame:
     def __init__(self, db:PhotonDB, server:PhotonServer):
         self.db = db
         self.server = server
-        self.ui = PhotonUI()
+        self.ui = PhotonUI(self)
         
-        # Start player entry screen
-        self.red_players, self.green_players = self.ui.run_player_entry()
-        # ^ This should not be handled by the UI
+        # Run UI
+        self.ui.run()
     
     def update(self) -> bool:
         self.server.update()
@@ -26,5 +25,15 @@ class PhotonGame:
         # Starts the game when called
         self.server.start_game()
 
-    def add_new_player(team:str):
-        pass
+    def clear_players(self):
+        self.server.players.clear()
+
+    def add_new_player(self, pid: int, name: str, equipment_id: int, team: str):
+        new_player = Player()
+        new_player.pid = pid
+        new_player.name = name
+        new_player.equipment_id = equipment_id
+        new_player.team = team
+        self.db.add_player(pid, name)
+        self.server.players.append(new_player)
+        self.server.broadcast_message(str(equipment_id))
