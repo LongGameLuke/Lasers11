@@ -62,7 +62,7 @@ class SplashScreen(Scene):
         self.font = pygame.font.SysFont("Arial", HEADER_SIZE)
         
         self.image = None
-        img = pygame.image.load("images/logo.jpg")
+        img = pygame.image.load("assets/images/logo.jpg")
         self.image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
         
     def update(self):
@@ -76,7 +76,8 @@ class SplashScreen(Scene):
 class PlayerEntry(Scene):
     def enter(self):
         self.font = pygame.font.SysFont(None, FONT_SIZE)
-        self.header_font = pygame.font.SysFont("Arial", HEADER_SIZE)
+        self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
+        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
         
         # Initialize grid data if not already present (preserves data if returning)
         if not hasattr(self, 'entries'):
@@ -185,8 +186,8 @@ class PlayerEntry(Scene):
         
         cols = ["Player ID", "Code Name", "Equipment ID"]
         for i, text in enumerate(cols):
-            self.draw_text(text, self.font, WHITE, 135 + i*150, 90)
-            self.draw_text(text, self.font, WHITE, 775 + i*150, 90)
+            self.draw_text(text, self.font, WHITE, 135 + i*150, 95)
+            self.draw_text(text, self.font, WHITE, 775 + i*150, 95)
 
         for r in range(30):
             is_green = r >= 15
@@ -212,7 +213,7 @@ class PlayerEntry(Scene):
         if self.status_message:
             self.draw_text (
                 self.status_message, 
-                self.font,
+                self.status_font,
                 self.status_color, 
                 SCREEN_WIDTH//2, 
                 SCREEN_HEIGHT - 65, 
