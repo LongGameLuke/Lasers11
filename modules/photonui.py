@@ -136,7 +136,10 @@ class PlayerEntry(Scene):
                         return
                     else:
                         self.current_col = 1
-                except: pass # Add db error hendling
+                except: pass # Add db error handling        
+            else:
+                self.status_message = "Player ID must be an integer!"
+                self.status_color = RED
 
         # 2. Name Field
         elif col == 1:
@@ -144,7 +147,7 @@ class PlayerEntry(Scene):
             
         elif col == 2:
             try:
-                # Make sure player entry is valid
+                # Make sure finalized player entry is valid before adding to game
                 if not self.entries[row][0].isdigit(): 
                     raise ValueError("Player ID must be an integer")
                 if not self.entries[row][1]: 
