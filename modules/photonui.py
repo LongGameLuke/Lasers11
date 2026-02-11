@@ -80,10 +80,13 @@ class PlayerEntry(Scene):
         
         # Initialize grid data if not already present (preserves data if returning)
         if not hasattr(self, 'entries'):
-            # 30 rows, 3 columns: [PlayerID, CodeName, EquipID]
+            # 30 rows, 3 columns: [PID, Name, Equipment ID]
             self.entries = [[ "", "", "" ] for _ in range(30)]
             self.current_row = 0
-            self.current_col = 0 # 0:ID, 1:Name, 2:Equip
+            self.current_col = 0
+        
+        self.status_message = ""
+        self.status_color = WHITE
 
     def handle_events(self, events):
         for event in events:
@@ -118,49 +121,55 @@ class PlayerEntry(Scene):
         row = self.current_row
         col = self.current_col
         val = self.entries[row][col].strip()
+        if not val: return
 
-        # 1. Player ID Field
+        # 1. PID Field
         if col == 0:
             if val.isdigit():
                 # Query DB for existing player
                 try:
                     player = self.game.db.get_player_by_pid(int(val))
                     if player:
-                        # Found: Fill name, skip to Equip ID
-                        self.entries[row][1] = player[1] 
-                        self.current_col = 2 
+                        self.entries[row][1] = player[1]
+                        self.current_col = 2
+                        return
                     else:
-                        # Not found: Move to Name field
                         self.current_col = 1
-                except:
-                    # DB error or invalid, move to Name safely
-                    self.current_col = 1
-            else:
-                if val: self.current_col = 1
+                except: pass # Add db error hendling
 
         # 2. Name Field
         elif col == 1:
-            if val:
-                self.current_col = 2 # Move to equipment id
-
-        # 3. Equipment ID Field (Finalize Row)
+            self.current_col = 2
+            
         elif col == 2:
-            if val.isdigit():
-                pid_str = self.entries[row][0]
-                name_str = self.entries[row][1]
+            try:
+                # Make sure player entry is valid
+                if not self.entries[row][0].isdigit(): 
+                    raise ValueError("Player ID must be an integer")
+                if not self.entries[row][1]: 
+                    raise ValueError("Name cannot be empty")
+                if not val.isdigit(): 
+                    raise ValueError("Equipment ID must be an integer")
                 
-                if pid_str and name_str:
-                    team = "Red" if row < 15 else "Green"
-                    try:
-                        self.game.add_new_player(int(pid_str), name_str, int(val), team)
-                        print(f"Added Player: {name_str} ({team})")
-                    except Exception as e:
-                        print(f"Error adding player: {e}")
-                    
-                    # Advance to next row
-                    if self.current_row < 29:
-                        self.current_row += 1
-                        self.current_col = 0
+                pid = int(self.entries[row][0])
+                name = self.entries[row][1]
+                equipment_id = int(val)
+                team = "Red" if row < 15 else "Green"
+                
+                if self.game.add_new_player(pid, name, equipment_id, team):
+                    self.status_message = f"Added {name} to {team} team!"
+                else:
+                    self.status_message = f"Loaded {name} into {team} team, welcome back!"
+                self.status_color = GREEN
+                
+                # Advance to next row
+                if self.current_row < 29:
+                    self.current_row += 1
+                    self.current_col = 0
+
+            except Exception as e:
+                self.status_message = str(e)
+                self.status_color = RED
 
     def clear_entries(self):
         self.entries = [[ "", "", "" ] for _ in range(30)]
@@ -174,10 +183,10 @@ class PlayerEntry(Scene):
         self.draw_text("GREEN TEAM", self.header_font, GREEN, 
                         3*SCREEN_WIDTH//4, 50, center=True)
         
-        cols = ["Player ID", "Code Name", "Equip ID"]
+        cols = ["Player ID", "Code Name", "Equipment ID"]
         for i, text in enumerate(cols):
-            self.draw_text(text, self.font, WHITE, 150 + i*150, 90)
-            self.draw_text(text, self.font, WHITE, 790 + i*150, 90)
+            self.draw_text(text, self.font, WHITE, 135 + i*150, 90)
+            self.draw_text(text, self.font, WHITE, 775 + i*150, 90)
 
         for r in range(30):
             is_green = r >= 15
@@ -199,9 +208,25 @@ class PlayerEntry(Scene):
                 val = self.entries[r][c]
                 if val:
                     self.draw_text(val, self.font, WHITE, x + 5, y + 5)
+        
+        if self.status_message:
+            self.draw_text (
+                self.status_message, 
+                self.font,
+                self.status_color, 
+                SCREEN_WIDTH//2, 
+                SCREEN_HEIGHT - 65, 
+                center=True
+                )    
 
-        self.draw_text("Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
-                        self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 30, center=True)
+        self.draw_text(
+            "Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
+            self.font, 
+            GRAY, 
+            SCREEN_WIDTH//2, 
+            SCREEN_HEIGHT - 30, 
+            center=True
+            )
 
     def draw_text(self, text, font, color, x, y, center=False):
         surf = font.render(str(text), True, color)
