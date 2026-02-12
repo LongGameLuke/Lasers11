@@ -11,7 +11,7 @@ class PhotonDB:
         self.dbname = dbname
         self.conn = None
         self.cur = None
-    
+
     def connect_to_database(self) -> bool:
         try:
             # Connect to database and create cursor
@@ -118,6 +118,7 @@ if __name__ == "__main__":
             # Search by PID
             try:
                 pid:int = int(input("PID: "))
+                db.get_player_by_pid(pid)
             except Exception as e:
                 print(e)
         elif menu_choice == 5:
