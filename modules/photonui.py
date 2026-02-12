@@ -148,7 +148,8 @@ class PlayerEntry(Scene):
         elif col == 2:
             try:
                 # Make sure finalized player entry is valid before adding to game
-                if not self.entries[row][0].isdigit(): 
+                test_pid = self.entries[row][0].strip()
+                if not test_pid.isdigit():
                     raise ValueError("Player ID must be an integer")
                 if not self.entries[row][1]: 
                     raise ValueError("Name cannot be empty")
@@ -156,7 +157,7 @@ class PlayerEntry(Scene):
                     raise ValueError("Equipment ID must be an integer")
                 
                 pid = int(self.entries[row][0])
-                name = self.entries[row][1]
+                name = self.entries[row][1].strip()
                 equipment_id = int(val)
                 team = "Red" if row < 15 else "Green"
                 
