@@ -21,7 +21,6 @@ def start_message() -> None:
     print("\t\tDayo Arigbede")
     print("\t\tBrendyn Burgess")
     print("\t\tBrad Chailland")
-    print("\t\tAngel Duron")
     print("\t\tLuke Fletcher")
     print("========================================\n")
 
@@ -100,8 +99,7 @@ if __name__ == "__main__":
     # Create game using initialized data
     game = PhotonGame(db, server)
 
-    # TEMPORARY - start game after 1 second delay
-    sleep(1)
+    # Start game
     server.start_game()
 
     # Main program loop
