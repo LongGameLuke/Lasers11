@@ -9,9 +9,9 @@ POINTS_PER_BASE_TAG = 150
 
 class PhotonGame:
     # This class runs the actual game after initialization
-    def __init__(self, db:PhotonDB, server:PhotonServer):
+    def __init__(self, db:PhotonDB, server_host:str, server_ports):
         self.db = db
-        self.server = server
+        self.server = PhotonServer(server_host, server_ports, self)
         self.ui = PhotonUI(self)
 
         # Game vars
@@ -60,7 +60,6 @@ class PhotonGame:
         new_player.equipment_id = equipment_id
         new_player.team = team
         self.players.append(new_player)
-        self.server.broadcast_message(str(equipment_id))
         # Function returns false anytime player is already in database
         return first_time_player
     

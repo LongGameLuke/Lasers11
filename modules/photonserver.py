@@ -10,21 +10,24 @@ class SERVER_CODES(Enum):
 
 
 class PhotonServer:
-    def __init__(self, host:str, ports:dict):
+    def __init__(self, host:str, ports:dict, game):
         # Create PhotonServer object
         self.host = host
         self.broadcast_port = ports["broadcast"]
         self.receive_port = ports["receive"]
         self.bufferSize = 1024
 
-        # Ref to game that is set after game is created
-        self.game = None
+        # Ref to parent Photongame
+        self.game = game
 
         # Datagram socket
         self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
         # Bind to address and ip
         self.udp_server_socket.bind((self.host, self.receive_port))
+
+        log_process(f"Server listening on port {ports['receive']}/udp")
+        log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
 
 
     def broadcast_message(self, message:str) -> None:
