@@ -29,8 +29,8 @@ class PhotonServer:
     
     def log_current_ports(self):
         # Displays current server ports in console
-        log_process(f"Server listening on port {ports['receive']}/udp")
-        log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
+        log_process(f"Server listening on port {self.receive_port}/udp")
+        log_process(f"Server broadcasting on port {self.broadcast_port}/udp")
 
 
     def broadcast_message(self, message:str) -> None:
@@ -54,10 +54,12 @@ class PhotonServer:
             self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
 
 
-    def set_ports(self, broadcast:int=self.broadcast_port, receive:int=self.receive_port) -> None:
+    def set_ports(self, broadcast = None, receive = None) -> None:
         # Sets current ports to new ones in event user changes them
-        self.broadcast_port = broadcast
-        self.receive_port = receive_port
+        if broadcast != None:
+            self.broadcast_port = broadcast
+        if receive != None:
+            self.receive_port = receive_port
         self.udp_server_socket.bind((self.host, self.receive_port))
         self.log_current_ports()
 
