@@ -17,10 +17,8 @@ class PhotonServer:
         self.receive_port = ports["receive"]
         self.bufferSize = 1024
 
-        # Game status vars
-        self.game_in_progress:bool = False
-        self.players_tagged = 0
-        self.players = []
+        # Ref to game that is set after game is created
+        self.game = None
 
         # Datagram socket
         self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -62,19 +60,28 @@ class PhotonServer:
         self.receive_port = receive_port
 
 
-    def player_tagged(self, equipment_tagger:int, equipment_tagged:int):
-        # Award 10 points to tagger
-        for player in self.players:
+    def event_player_tag(self, equipment_tagger:int, equipment_tagged:int):
+        tagger = None
+        tagged_player = None
+
+        # Find player profile assosiated with equipment ids
+        for player in game.players:
             if player.equipment_id == equipment_tagger:
-                player.score += 10
+                tagger = player
             elif player.equipment_id == equipment_tagged:
-                # Tell the tagged player they need to "shut down"
-                self.broadcast_tagged()
+                tagged_player = player
+            
+            # Exit for loop if profiles are found
+            if tagger != None and tagged_player != None:
+                continue
+        
+        # Let PhotonGame handle game logic
+        self.game.player_tagged(tagger, tagged_player)
 
     
     def broadcast_tagged(self):
         # Broadcast the tagged signal to equipment that needs to "shut down"
-        pass
+        self.broadcast_message(hit_equipment[1])
 
 
     def update(self) -> None:
@@ -87,6 +94,5 @@ class PhotonServer:
 
         print(f"{clientIP}: {clientMsg}")
 
-        self.players_tagged += 1
         hit_equipment = message.split(":")
-        self.broadcast_message(hit_equipment[1])
+        self.event_player_tag(hit_equipment[0], hit_equipment[1])

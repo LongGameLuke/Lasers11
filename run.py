@@ -98,9 +98,7 @@ if __name__ == "__main__":
 
     # Create game using initialized data
     game = PhotonGame(db, server)
-
-    # Start game
-    server.start_game()
+    server.game = game
 
     # Main program loop
     keep_running = True
