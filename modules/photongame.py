@@ -16,31 +16,39 @@ class PhotonGame:
 
         # Game vars
         self.game_in_progress:bool = False
-        self.players:list = []
+        self.players = []
         
         # Run UI
         self.ui.run()
     
     def update(self) -> bool:
         self.server.update()
-
         # Keep game running
         return True
 
     def start_game(self):
-        # Starts the game
+        # Starts the game.
+        # Reset all players scores
+        for player in self.players:
+            player.score = 0
+        self.game_in_progress = True
         self.server.start_game()
+
+    def end_game(self):
+        # Ends the in progress game
+        self.game_in_progress = False
+        self.server.end_game()
 
     def clear_players(self):
         # Clears players from game
-        self.server.players.clear()
+        self.players.clear()
 
     def add_new_player(self, pid: int, name: str, equipment_id: int, team: str) -> bool: 
         for p in self.players:
             if p.pid == pid:
                 raise ValueError(f"Player is already in game!")
         
-        first_time_player = self.db.add_player(pid, name)
+        first_time_player:bool = self.db.add_player(pid, name)
         if not first_time_player:
             existing = self.db.get_player_by_pid(pid)
             if existing and existing[1] != name:

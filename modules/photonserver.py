@@ -34,14 +34,9 @@ class PhotonServer:
     
 
     def start_game(self) -> None:
-        # Reset all players scores
-        for player in self.players:
-            player.score = 0
-
         # Send the start game code to clients
-        log_process(f"Starting new game with {len(self.players)} players!")
+        log_process(f"Starting new game with {len(self.game.players)} players!")
         start_code = str.encode(SERVER_CODES.START.value)
-        self.game_in_progress = True
         self.udp_server_socket.sendto(start_code, (self.host, self.broadcast_port))
 
 
@@ -51,7 +46,6 @@ class PhotonServer:
         end_code = str.encode(SERVER_CODES.END.value)
         for i in range(3):
             self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
-        self.game_in_progress = False
 
 
     def set_ports(self, broadcast:int, receive:int) -> None:
@@ -65,7 +59,7 @@ class PhotonServer:
         tagged_player = None
 
         # Find player profile assosiated with equipment ids
-        for player in game.players:
+        for player in self.game.players:
             if player.equipment_id == equipment_tagger:
                 tagger = player
             elif player.equipment_id == equipment_tagged:
