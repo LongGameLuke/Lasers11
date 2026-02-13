@@ -17,6 +17,7 @@ HEADER_SIZE = 36
 GRID_START_Y = 120
 ROW_HEIGHT = 30
 COL_WIDTH = 140
+MAX_TEAM_ROWS = 15
 
 class Scene:
     def __init__(self, manager):
@@ -80,9 +81,12 @@ class PlayerEntry(Scene):
         self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
         
         # Initialize grid data if not already present (preserves data if returning)
-        if not hasattr(self, 'entries'):
-            # 30 rows, 3 columns: [PID, Name, Equipment ID]
-            self.entries = [[ "", "", "" ] for _ in range(30)]
+        if not hasattr(self, "red_entries"):
+            # Dynamic rows starting with 1 on each side.
+            self.red_entries = [["", "", ""]]
+            self.green_entries = [["", "", ""]]
+
+            self.current_team = "Red"
             self.current_row = 0
             self.current_col = 0
         
@@ -91,7 +95,16 @@ class PlayerEntry(Scene):
 
     def handle_events(self, events):
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mx, my = event.pos
+                hit = self.hit_cell(mx, my)
+                if hit:
+                    team, row, col = hit
+                    self.current_team = team
+                    self.current_row = row
+                    self.current_col = col
+
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F5:
                     self.game.start_game()
                     self.manager.switch("GAME_ACTION")
@@ -101,14 +114,16 @@ class PlayerEntry(Scene):
                 elif event.key in [pygame.K_RETURN]:
                     self.process_input()
                 elif event.key == pygame.K_BACKSPACE:
-                    curr_val = self.entries[self.current_row][self.current_col]
-                    self.entries[self.current_row][self.current_col] = curr_val[:-1]
+                    entries = self.get_entries(self.current_team)
+                    curr_val = entries[self.current_row][self.current_col]
+                    entries[self.current_row][self.current_col] = curr_val[:-1]
                 
                 # Arrowkeys navigation
                 elif event.key == pygame.K_UP:
                     self.current_row = max(0, self.current_row - 1)
                 elif event.key == pygame.K_DOWN:
-                    self.current_row = min(29, self.current_row + 1)
+                    entries = self.get_entries(self.current_team)
+                    self.current_row = min(len(entries) - 1, self.current_row + 1)
                 elif event.key == pygame.K_LEFT:
                     self.current_col = max(0, self.current_col - 1)
                 elif event.key == pygame.K_RIGHT:
@@ -116,12 +131,51 @@ class PlayerEntry(Scene):
                 
                 else:
                     if event.unicode.isprintable():
-                        self.entries[self.current_row][self.current_col] += event.unicode
+                        entries = self.get_entries(self.current_team)
+                        entries[self.current_row][self.current_col] += event.unicode
+
+    def get_entries(self, team: str):
+        return self.red_entries if team == "Red" else self.green_entries
+
+    def ensure_nex_row(self, team: str, row_completed_idx: int) -> None:
+        """Append next row"""
+        entries = self.get_entries(team)
+        if row_completed_idx == len(entries) - 1 and len(entries) < MAX_TEAM_ROWS:
+            entries.append(["", "", ""])
+
+    def hit_cell(self, mx: int, my: int):
+        panes = [("Red", 110, self.red_entries),("Green", 750, self.green_entries),]
+
+        for team, base_x, entries in panes:
+            rows = len(entries)
+            if rows <= 0:
+                continue
+
+            top = GRID_START_Y
+            bottom = GRID_START_Y + rows * ROW_HEIGHT
+
+            if my < top or my > bottom:
+                continue
+
+            row = (my - GRID_START_Y) // ROW_HEIGHT
+            if row < 0 or row >= rows:
+                continue
+
+            for col in range(3):
+                x = base_x + col * 150
+                rect = pygame.Rect(x, GRID_START_Y + row * ROW_HEIGHT, COL_WIDTH, 25)
+                if rect.collidepoint(mx, my):
+                    return (team, int(row), int(col))
+
+        return None
 
     def process_input(self):
+        team = self.current_team
+        entries = self.get_entries(team)
+
         row = self.current_row
         col = self.current_col
-        val = self.entries[row][col].strip()
+        val = entries[row][col].strip()
         if not val: return
 
         # 1. PID Field
@@ -131,7 +185,7 @@ class PlayerEntry(Scene):
                 try:
                     player = self.game.db.get_player_by_pid(int(val))
                     if player:
-                        self.entries[row][1] = player[1]
+                        entries[row][1] = player[1]
                         self.current_col = 2
                         return
                     else:
@@ -148,18 +202,17 @@ class PlayerEntry(Scene):
         elif col == 2:
             try:
                 # Make sure finalized player entry is valid before adding to game
-                test_pid = self.entries[row][0].strip()
+                test_pid = entries[row][0].strip()
                 if not test_pid.isdigit():
                     raise ValueError("Player ID must be an integer")
-                if not self.entries[row][1]: 
+                if not entries[row][1]: 
                     raise ValueError("Name cannot be empty")
                 if not val.isdigit(): 
                     raise ValueError("Equipment ID must be an integer")
                 
-                pid = int(self.entries[row][0])
-                name = self.entries[row][1].strip()
+                pid = int(entries[row][0])
+                name = entries[row][1].strip()
                 equipment_id = int(val)
-                team = "Red" if row < 15 else "Green"
                 
                 if self.game.add_new_player(pid, name, equipment_id, team):
                     self.status_message = f"Added {name} to {team} team!"
@@ -167,17 +220,21 @@ class PlayerEntry(Scene):
                     self.status_message = f"Loaded {name} into {team} team, welcome back!"
                 self.status_color = GREEN
                 
-                # Advance to next row
-                if self.current_row < 29:
+                # Add a new row for team with freshly added entry
+                self.ensure_nex_row(team, row)
+                entries = self.get_entries(team)
+                if self.current_row < len(entries) - 1:
                     self.current_row += 1
-                    self.current_col = 0
+                self.current_col = 0
 
             except Exception as e:
                 self.status_message = str(e)
                 self.status_color = RED
 
     def clear_entries(self):
-        self.entries = [[ "", "", "" ] for _ in range(30)]
+        self.red_entries = [["", "", ""]]
+        self.green_entries = [["", "", ""]]
+        self.current_team = "Red"
         self.current_row = 0
         self.current_col = 0
 
@@ -193,26 +250,44 @@ class PlayerEntry(Scene):
             self.draw_text(text, self.font, WHITE, 135 + i*150, 95)
             self.draw_text(text, self.font, WHITE, 775 + i*150, 95)
 
-        for r in range(30):
-            is_green = r >= 15
-            display_r = r - 15 if is_green else r
-            base_x = 750 if is_green else 110
-            y = GRID_START_Y + display_r * ROW_HEIGHT
-            self.draw_text(f"{display_r + 1:2}", self.font, GRAY, base_x - 35, y + 5)
-            
+        # Draw RED rows
+        for r, row_vals in enumerate(self.red_entries):
+            base_x = 110
+            y = GRID_START_Y + r * ROW_HEIGHT
+            self.draw_text(f"{r + 1:2}", self.font, GRAY, base_x - 35, y + 5)
+
             for c in range(3):
                 x = base_x + c * 150
                 rect = pygame.Rect(x, y, COL_WIDTH, 25)
-                
-                # Focus on current selection
-                if r == self.current_row and c == self.current_col:
+
+                if self.current_team == "Red" and r == self.current_row and c == self.current_col:
                     pygame.draw.rect(self.screen, YELLOW, rect, 2)
                 else:
                     pygame.draw.rect(self.screen, GRAY, rect, 1)
-                
-                val = self.entries[r][c]
+
+                val = row_vals[c]
                 if val:
                     self.draw_text(val, self.font, WHITE, x + 5, y + 5)
+
+        # Draw GREEN rows
+        for r, row_vals in enumerate(self.green_entries):
+            base_x = 750
+            y = GRID_START_Y + r * ROW_HEIGHT
+            self.draw_text(f"{r + 1:2}", self.font, GRAY, base_x - 35, y + 5)
+
+            for c in range(3):
+                x = base_x + c * 150
+                rect = pygame.Rect(x, y, COL_WIDTH, 25)
+
+                if self.current_team == "Green" and r == self.current_row and c == self.current_col:
+                    pygame.draw.rect(self.screen, YELLOW, rect, 2)
+                else:
+                    pygame.draw.rect(self.screen, GRAY, rect, 1)
+
+                val = row_vals[c]
+                if val:
+                    self.draw_text(val, self.font, WHITE, x + 5, y + 5)
+
         
         if self.status_message:
             self.draw_text (
@@ -225,7 +300,7 @@ class PlayerEntry(Scene):
                 )    
 
         self.draw_text(
-            "Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
+            "Mouse: Click cell | Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
             self.font, 
             GRAY, 
             SCREEN_WIDTH//2, 
