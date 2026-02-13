@@ -54,7 +54,7 @@ class PhotonDB:
             print(f"\nAdded {player_name} to database with id: {pid}")
             return True
         else:
-            print(f"\nPlayer with PID({pid}) already exists")
+            print(f"\nFound player with PID: {pid}")
             return False
 
     def remove_player(self, pid:int) -> bool:
@@ -114,6 +114,7 @@ if __name__ == "__main__":
             # Search by PID
             try:
                 pid:int = int(input("PID: "))
+                db.get_player_by_pid(pid)
             except Exception as e:
                 print(e)
         elif menu_choice == 5:

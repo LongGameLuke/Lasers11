@@ -85,20 +85,10 @@ if __name__ == "__main__":
     # Load database connection
     db = load_database(config)
     
-    # Create game server
-    log_process_start("Creating game server")
-    server = PhotonServer(config["photon"]["network"]["host"], ports)
-    log_process_complete("Created game server")
-    print("\n")
-    log_process(f"Server listening on port {ports['receive']}/udp")
-    log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
-    print("\nPress Ctrl+c to exit program.\n")
+    # print("\nPress Ctrl+c to exit program.\n")
 
     # Create game using initialized data
-    game = PhotonGame(db, server)
-
-    # Start game
-    server.start_game()
+    game = PhotonGame(db, config["photon"]["network"]["host"], ports)
 
     # Main program loop
     keep_running = True
