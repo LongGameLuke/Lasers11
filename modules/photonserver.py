@@ -23,9 +23,8 @@ class PhotonServer:
         # Datagram socket
         self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-        # Bind to address and ip
+        # Bind to address and ports
         self.udp_server_socket.bind((self.host, self.receive_port))
-
         self.log_current_ports()
     
     def log_current_ports(self):
@@ -59,6 +58,7 @@ class PhotonServer:
         # Sets current ports to new ones in event user changes them
         self.broadcast_port = broadcast
         self.receive_port = receive_port
+        self.udp_server_socket.bind((self.host, self.receive_port))
         self.log_current_ports()
 
 
