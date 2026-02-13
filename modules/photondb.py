@@ -3,23 +3,19 @@ from typing import Union
 from getpass import getpass # replacement for input() when inputting passwords
 
 class PhotonDB:
-    def __init__(self, user:str, password:str, host:str="127.0.0.1", port:int=5432, dbname:str="photon"):
-        self.host = host
+    def __init__(self, user:str, port:int=5432, dbname:str="photon"):
         self.port = port
         self.user = user
-        self.password = password
         self.dbname = dbname
         self.conn = None
         self.cur = None
-
+    
     def connect_to_database(self) -> bool:
         try:
             # Connect to database and create cursor
             self.conn = psycopg2.connect(
-                host=self.host,
                 dbname=self.dbname,
-                user=self.user,
-                password=self.password
+                user=self.user
             )
             self.cur = self.conn.cursor()
             return True
@@ -58,7 +54,7 @@ class PhotonDB:
             print(f"\nAdded {player_name} to database with id: {pid}")
             return True
         else:
-            print(f"\nFound player with PID: {pid}")
+            print(f"\nPlayer with PID({pid}) already exists")
             return False
 
     def remove_player(self, pid:int) -> bool:
@@ -118,7 +114,6 @@ if __name__ == "__main__":
             # Search by PID
             try:
                 pid:int = int(input("PID: "))
-                db.get_player_by_pid(pid)
             except Exception as e:
                 print(e)
         elif menu_choice == 5:

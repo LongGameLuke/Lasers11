@@ -60,10 +60,8 @@ def load_database(config:dict) -> PhotonDB:
     try:
         log_process_start("Connecting to database")
         db = PhotonDB(
-            host=config["database"]["host"],
             port=config["database"]["port"],
             user=config["database"]["user"],
-            password=config["database"]["password"],
             dbname=config["database"]["db-name"]
             )
         db.connect_to_database()
@@ -87,10 +85,20 @@ if __name__ == "__main__":
     # Load database connection
     db = load_database(config)
     
-    # print("\nPress Ctrl+c to exit program.\n")
+    # Create game server
+    log_process_start("Creating game server")
+    server = PhotonServer(config["photon"]["network"]["host"], ports)
+    log_process_complete("Created game server")
+    print("\n")
+    log_process(f"Server listening on port {ports['receive']}/udp")
+    log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
+    print("\nPress Ctrl+c to exit program.\n")
 
     # Create game using initialized data
-    game = PhotonGame(db, config["photon"]["network"]["host"], ports)
+    game = PhotonGame(db, server)
+
+    # Start game
+    server.start_game()
 
     # Main program loop
     keep_running = True
