@@ -26,6 +26,10 @@ class PhotonServer:
         # Bind to address and ip
         self.udp_server_socket.bind((self.host, self.receive_port))
 
+        self.log_current_ports()
+    
+    def log_current_ports(self):
+        # Displays current server ports in console
         log_process(f"Server listening on port {ports['receive']}/udp")
         log_process(f"Server broadcasting on port {ports['broadcast']}/udp")
 
@@ -55,6 +59,7 @@ class PhotonServer:
         # Sets current ports to new ones in event user changes them
         self.broadcast_port = broadcast
         self.receive_port = receive_port
+        self.log_current_ports()
 
 
     def event_player_tag(self, equipment_tagger:int, equipment_tagged:int):
