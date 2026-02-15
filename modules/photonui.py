@@ -2,6 +2,8 @@ import pygame
 import sys
 import time
 import os
+import socket
+
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -108,6 +110,8 @@ class PlayerEntry(Scene):
                 if event.key == pygame.K_F5:
                     self.game.start_game()
                     self.manager.switch("GAME_ACTION")
+                elif event.key == pygame.K_F7:
+                    self.manager.switch("NETWORK_CONFIG")
                 elif event.key == pygame.K_F12:
                     self.clear_entries()
                     self.game.clear_players()
@@ -300,9 +304,9 @@ class PlayerEntry(Scene):
                 )    
 
         self.draw_text(
-            "Mouse: Click cell | Arrow Keys: Navigate | Enter: Save entry | F5: Start Game | F12: Clear Entries", 
+            "Enter: Save entry | F5: Start Game | F7: Network Config | F12: Clear Entries", 
             self.font, 
-            GRAY, 
+            YELLOW, 
             SCREEN_WIDTH//2, 
             SCREEN_HEIGHT - 30, 
             center=True
@@ -321,6 +325,110 @@ class GameAction(Scene):
     def enter(self):
         pass
 
+class NetworkConfig(Scene):
+    def enter(self):
+        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+        
+        # Initialize with current values
+        self.host = self.game.server.host
+        self.broadcast_port = str(self.game.server.broadcast_port)
+        self.receive_port = str(self.game.server.receive_port)
+
+        # Fields: 0=host, 1=broadcast, 2=receive
+        self.current_field = 0
+        
+        self.status_message = ""
+        self.status_color = WHITE
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F7 or event.key == pygame.K_ESCAPE:
+                    self.manager.switch("PLAYER_ENTRY")
+                elif event.key == pygame.K_UP:
+                    self.current_field = (self.current_field - 1) % 3
+                elif event.key == pygame.K_DOWN:
+                    self.current_field = (self.current_field + 1) % 3
+                elif event.key == pygame.K_RETURN:
+                    self.save_changes()
+                elif event.key == pygame.K_BACKSPACE:
+                    if self.current_field == 0: self.host = self.host[:-1]
+                    elif self.current_field == 1: self.broadcast_port = self.broadcast_port[:-1]
+                    elif self.current_field == 2: self.receive_port = self.receive_port[:-1]
+                else:
+                    if event.unicode.isprintable():
+                        if self.current_field == 0: self.host += event.unicode
+                        elif self.current_field == 1: self.broadcast_port += event.unicode
+                        elif self.current_field == 2: self.receive_port += event.unicode
+
+    def save_changes(self):
+        try:
+            b_port = int(self.broadcast_port)
+            r_port = int(self.receive_port)
+            host = self.host.strip()
+
+            if not host:
+                raise ValueError("Host cannot be empty")
+            self.game.server.udp_server_socket.close()
+            self.game.server.host = host
+            self.game.server.broadcast_port = b_port
+            self.game.server.receive_port = r_port
+            
+            # Re-initialize the socket with new parameters
+            self.game.server.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+            self.game.server.udp_server_socket.setblocking(False)
+            self.game.server.udp_server_socket.bind((self.game.server.host, self.game.server.receive_port))
+            
+            self.game.server.log_current_ports()
+            self.status_message = "Network settings updated!"
+            self.status_color = GREEN
+        except Exception as e:
+            self.status_message = f"Error: {e}"
+            self.status_color = RED
+
+    def render(self):
+        self.screen.fill(BACKGROUND)
+        self.draw_text("NETWORK CONFIGURATION", self.header_font, YELLOW, 
+                        SCREEN_WIDTH//2, 100, center=True)
+        
+        fields = [
+            ("Host:", self.host),
+            ("Broadcast Port:", self.broadcast_port),
+            ("Receive Port:", self.receive_port)
+        ]
+
+        for i, (label, value) in enumerate(fields):
+            y = 250 + i * 60
+            # Draw label
+            self.draw_text(label, self.font, WHITE, SCREEN_WIDTH//2 - 200, y)
+            
+            # Draw field box
+            rect = pygame.Rect(SCREEN_WIDTH//2, y - 5, 300, 30)
+            if i == self.current_field:
+                pygame.draw.rect(self.screen, YELLOW, rect, 2)
+            else:
+                pygame.draw.rect(self.screen, GRAY, rect, 1)
+            
+            # Draw value
+            self.draw_text(value, self.font, WHITE, SCREEN_WIDTH//2 + 10, y)
+
+        if self.status_message:
+            self.draw_text(self.status_message, self.font, self.status_color, 
+                            SCREEN_WIDTH//2, 450, center=True)
+
+        self.draw_text("Arrows: Move | Enter: Save | F7/ESC: Back", 
+                        self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 50, center=True)
+
+    def draw_text(self, text, font, color, x, y, center=False):
+        surf = font.render(str(text), True, color)
+        rect = surf.get_rect()
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+        self.screen.blit(surf, rect)
+
 class PhotonUI:
     def __init__(self, game):
         self.game = game
@@ -332,6 +440,7 @@ class PhotonUI:
         self.scene_manager.add("SPLASH", SplashScreen)
         self.scene_manager.add("PLAYER_ENTRY", PlayerEntry)
         self.scene_manager.add("GAME_ACTION", GameAction)
+        self.scene_manager.add("NETWORK_CONFIG", NetworkConfig)
         self.scene_manager.switch("SPLASH")
 
     def run(self):
