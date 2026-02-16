@@ -54,12 +54,16 @@ class PhotonServer:
             self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
 
 
-    def set_ports(self, broadcast = None, receive = None) -> None:
-        # Sets current ports to new ones in event user changes them
+    def set_network(self, host=None, broadcast=None, receive=None) -> None:
+        # Sets current ports & host to new ones in event user changes them
         if broadcast != None:
             self.broadcast_port = broadcast
         if receive != None:
-            self.receive_port = receive_port
+             self.receive_port = receive
+        if host != None:
+             self.host = host
+
+        self.udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_server_socket.bind((self.host, self.receive_port))
         self.log_current_ports()
 

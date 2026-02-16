@@ -364,23 +364,11 @@ class NetworkConfig(Scene):
 
     def save_changes(self):
         try:
-            b_port = int(self.broadcast_port)
-            r_port = int(self.receive_port)
-            host = self.host.strip()
-
-            if not host:
-                raise ValueError("Host cannot be empty")
-            self.game.server.udp_server_socket.close()
-            self.game.server.host = host
-            self.game.server.broadcast_port = b_port
-            self.game.server.receive_port = r_port
-            
-            # Re-initialize the socket with new parameters
-            self.game.server.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-            self.game.server.udp_server_socket.setblocking(False)
-            self.game.server.udp_server_socket.bind((self.game.server.host, self.game.server.receive_port))
-            
-            self.game.server.log_current_ports()
+            self.game.server.set_network(
+                host=self.host.strip(),
+                broadcast=int(self.broadcast_port),
+                receive=int(self.receive_port)
+            )
             self.status_message = "Network settings updated!"
             self.status_color = GREEN
         except Exception as e:
@@ -393,7 +381,7 @@ class NetworkConfig(Scene):
                         SCREEN_WIDTH//2, 100, center=True)
         
         fields = [
-            ("Host:", self.host),
+            ("Host Address:", self.host),
             ("Broadcast Port:", self.broadcast_port),
             ("Receive Port:", self.receive_port)
         ]
