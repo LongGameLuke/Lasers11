@@ -11,6 +11,7 @@ BACKGROUND = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (139, 0, 0)
 GREEN = (0, 100, 0)
+LIGHT_GREEN = (130, 255, 76)
 YELLOW = (255, 255, 0)
 GRAY = (100, 100, 100)
 
@@ -323,7 +324,36 @@ class PlayerEntry(Scene):
 
 class GameAction(Scene):
     def enter(self):
-        pass
+        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
+        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+
+        self.image = None
+        img = pygame.image.load("assets/images/logo.jpg")
+        self.image = pygame.transform.scale(img, (200, 200))
+
+    def render(self):
+        self.screen.fill(BACKGROUND)
+        self.screen.blit(self.image, (10, 10))
+        self.draw_text("GAME ON!", self.header_font, LIGHT_GREEN, 
+                        SCREEN_WIDTH//2, 100, center=True)
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F5 or event.key == pygame.K_ESCAPE:
+                    self.manager.switch("PLAYER_ENTRY")
+                else:
+                    pass
+
+    def draw_text(self, text, font, color, x, y, center=False):
+        surf = font.render(str(text), True, color)
+        rect = surf.get_rect()
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+        self.screen.blit(surf, rect)
 
 class NetworkConfig(Scene):
     def enter(self):
