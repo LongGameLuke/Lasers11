@@ -59,11 +59,7 @@ def load_database(config:dict) -> PhotonDB:
     # Connect to the postgresql database
     try:
         log_process_start("Connecting to database")
-        db = PhotonDB(
-            port=config["database"]["port"],
-            user=config["database"]["user"],
-            dbname=config["database"]["db-name"]
-            )
+        db = PhotonDB(dbname=config["database"]["db-name"])
         db.connect_to_database()
         log_process_complete("Connected to database")
         return db
