@@ -1,11 +1,8 @@
 import psycopg2
 from typing import Union
-from getpass import getpass # replacement for input() when inputting passwords
 
 class PhotonDB:
-    def __init__(self, user:str, port:int=5432, dbname:str="photon"):
-        self.port = port
-        self.user = user
+    def __init__(self, dbname:str="photon"):
         self.dbname = dbname
         self.conn = None
         self.cur = None
@@ -14,8 +11,7 @@ class PhotonDB:
         try:
             # Connect to database and create cursor
             self.conn = psycopg2.connect(
-                dbname=self.dbname,
-                user=self.user
+                dbname=self.dbname
             )
             self.cur = self.conn.cursor()
             return True
@@ -94,9 +90,7 @@ if __name__ == "__main__":
 
         if menu_choice == 1:
             # Connect to database
-            username = input("Database Username: ")
-            password = getpass("Database Password: ")
-            db = PhotonDB(user=username, password=password)
+            db = PhotonDB("photon")
             db.connect_to_database()
             print(f"Connected to database({db.dbname})")
         elif menu_choice == 2:
