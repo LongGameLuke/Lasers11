@@ -453,6 +453,7 @@ class PhotonUI:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Photon Laser Tag")
+        self.clock = pygame.time.Clock()
 
         self.scene_manager = SceneManager(game, self.screen)
         self.scene_manager.add("SPLASH", SplashScreen)
@@ -461,23 +462,18 @@ class PhotonUI:
         self.scene_manager.add("NETWORK_CONFIG", NetworkConfig)
         self.scene_manager.switch("SPLASH")
 
-    def run(self):
-        clock = pygame.time.Clock()
-        running = True
+    def update(self):
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
         
-        while running:
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    running = False
-            
-            if self.scene_manager.current_scene:
-                self.scene_manager.current_scene.handle_events(events)
-                self.scene_manager.current_scene.update()
-                self.scene_manager.current_scene.render()
-            
-            pygame.display.flip()
-            clock.tick(30)
+        if self.scene_manager.current_scene:
+            self.scene_manager.current_scene.handle_events(events)
+            self.scene_manager.current_scene.update()
+            self.scene_manager.current_scene.render()
         
-        pygame.quit()
-        sys.exit()
+        pygame.display.flip()
+        self.clock.tick(30)

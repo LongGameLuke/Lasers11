@@ -22,15 +22,15 @@ class PhotonGame:
         self.countdown_active:bool = False
         self.countdown_time:int = 5
         self.start_time = None
-        
-        # Run UI
-        self.ui.run()
     
     def update(self) -> bool:
         if self.countdown_active:
             self.countdown()
         elif self.game_in_progress:
             self.server.update()
+        
+        # Update UI
+        self.ui.update()
 
         # Keep game running
         return True
