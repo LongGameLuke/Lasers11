@@ -3,6 +3,7 @@ from modules.photonserver import PhotonServer
 from modules.photonui import PhotonUI
 from modules.player import Player
 import time
+from math import ceil
 
 POINTS_PER_TAG = 50
 POINTS_PER_BASE_TAG = 150
@@ -45,7 +46,7 @@ class PhotonGame:
     def countdown_timer_update(self):
         time_elapsed = (time.time() - self.start_time)
         self.countdown_time = (self.countdown_timer_length - time_elapsed)
-        if self.countdown_time <= 0.0:
+        if ceil(self.countdown_time) == 0:
             self.countdown_active = False
 
     def start_game(self):
