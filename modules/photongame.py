@@ -25,32 +25,38 @@ class PhotonGame:
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
         self.countdown_timer_length = 6
-        self.start_time:float = 0.0
+        self.countdown_start_time:float = 0.0
     
     def update(self) -> bool:
         if self.start_game_flag:
-            self.start_game_flag = False
             self.start_game()
         elif self.countdown_active:
             self.countdown_timer_update()
-        elif self.game_in_progress:
-            self.server.update()
+        # elif self.game_in_progress:
+        #     print("server update")
+        #     #self.server.update()
 
         # Update UI
-        window_still_open = self.ui.update()
-        if not window_still_open:
+        window_open = self.ui.update()
+        if not window_open:
             self.ui.kill_pygame()
+            
 
         # Keep game running
-        return window_still_open
+        return window_open
 
     def countdown_timer_update(self):
-        time_elapsed = (time.time() - self.start_time)
+        # Perform game start countdown timer operation
+        time_elapsed = (time.time() - self.countdown_start_time)
         self.countdown_time = (self.countdown_timer_length - time_elapsed)
-        if ceil(self.countdown_time) == 0:
+        if ceil(self.countdown_time) == 1:
             self.countdown_active = False
+            log_game_event("Countdown ended. LET IT RIP!")
 
     def start_game(self):
+        self.start_game_flag = False
+        log_game_event("Game starting...")
+
         # Starts the game.
         # Reset all players scores
         for player in self.players:
@@ -58,12 +64,12 @@ class PhotonGame:
 
         # setup countdown timer
         self.countdown_time = 6 # This needs to be 6 to count down for a full 5 seconds
-        self.start_time = time.time()
+        self.countdown_start_time = time.time()
         self.countdown_active = True
+        log_game_event(f"Game beginning in {self.countdown_time - 1} seconds...")
 
         self.game_in_progress = True
         self.server.start_game()
-        log_game_event("Game Started")
 
     def end_game(self):
         # Ends the in progress game
