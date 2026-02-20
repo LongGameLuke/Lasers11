@@ -109,7 +109,7 @@ class PlayerEntry(Scene):
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F5:
-                    self.game.start_game()
+                    self.game.start_game_flag = True
                     self.manager.switch("GAME_ACTION")
                 elif event.key == pygame.K_F7:
                     self.manager.switch("NETWORK_CONFIG")

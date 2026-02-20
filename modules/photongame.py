@@ -15,31 +15,35 @@ class PhotonGame:
         self.ui = PhotonUI(self)
 
         # Game vars
+        self.start_game_flag = False
         self.game_in_progress:bool = False
         self.players = []
 
         # Countdown vars
         self.countdown_active:bool = False
-        self.countdown_time:int = 5
-        self.start_time = None
+        self.countdown_time:float = -1.0 # This is the var to use in UI
+        self.countdown_timer_length = 6
+        self.start_time:float = 0.0
     
     def update(self) -> bool:
-        if self.countdown_active:
-            self.countdown()
+        if self.start_game_flag:
+            self.start_game_flag = False
+            self.start_game()
+        elif self.countdown_active:
+            self.countdown_timer_update()
         elif self.game_in_progress:
             self.server.update()
-        
+
         # Update UI
         self.ui.update()
 
         # Keep game running
         return True
 
-    def countdown(self):
-        time_elapsed = int((self.start_time - time.time()) / 60)
-        self.countdown_time = (5 - time_elapsed)
-        print(self.countdown_time)
-        if self.countdown_time <= 0:
+    def countdown_timer_update(self):
+        time_elapsed = (time.time() - self.start_time)
+        self.countdown_time = (self.countdown_timer_length - time_elapsed)
+        if self.countdown_time <= 0.0:
             self.countdown_active = False
 
     def start_game(self):
@@ -49,7 +53,7 @@ class PhotonGame:
             player.score = 0
 
         # setup countdown timer
-        self.countdown_time = 5
+        self.countdown_time = 6 # This needs to be 6 to count down for a full 5 seconds
         self.start_time = time.time()
         self.countdown_active = True
 
