@@ -462,13 +462,14 @@ class PhotonUI:
         self.scene_manager.add("NETWORK_CONFIG", NetworkConfig)
         self.scene_manager.switch("SPLASH")
 
-    def update(self):
+    def kill_pygame(self):
+        pygame.quit()
+
+    def update(self)->bool:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
+                return False
         
         if self.scene_manager.current_scene:
             self.scene_manager.current_scene.handle_events(events)
@@ -477,3 +478,4 @@ class PhotonUI:
         
         pygame.display.flip()
         self.clock.tick(30)
+        return True

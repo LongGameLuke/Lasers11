@@ -35,10 +35,12 @@ class PhotonGame:
             self.server.update()
 
         # Update UI
-        self.ui.update()
+        window_still_open = self.ui.update()
+        if not window_still_open:
+            self.ui.kill_pygame()
 
         # Keep game running
-        return True
+        return window_still_open
 
     def countdown_timer_update(self):
         time_elapsed = (time.time() - self.start_time)
