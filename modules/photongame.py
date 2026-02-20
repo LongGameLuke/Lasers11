@@ -2,6 +2,7 @@ from modules.photondb import PhotonDB
 from modules.photonserver import PhotonServer
 from modules.photonui import PhotonUI
 from modules.player import Player
+from modules.consolelog import log_game_event, log_game_tag_event
 import time
 from math import ceil
 
@@ -62,6 +63,7 @@ class PhotonGame:
 
         self.game_in_progress = True
         self.server.start_game()
+        log_game_event("Game Started")
 
     def end_game(self):
         # Ends the in progress game
