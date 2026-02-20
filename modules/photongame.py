@@ -2,7 +2,7 @@ from modules.photondb import PhotonDB
 from modules.photonserver import PhotonServer
 from modules.photonui import PhotonUI
 from modules.player import Player
-from time import sleep
+import time
 
 POINTS_PER_TAG = 50
 POINTS_PER_BASE_TAG = 150
@@ -17,20 +17,42 @@ class PhotonGame:
         # Game vars
         self.game_in_progress:bool = False
         self.players = []
+
+        # Countdown vars
+        self.countdown_active:bool = False
+        self.countdown_time:int = 5
+        self.start_time = None
         
         # Run UI
         self.ui.run()
     
     def update(self) -> bool:
-        self.server.update()
+        if self.countdown_active:
+            self.countdown()
+        elif self.game_in_progress:
+            self.server.update()
+
         # Keep game running
         return True
+
+    def countdown(self):
+        time_elapsed = int((self.start_time - time.time()) / 60)
+        self.countdown_time = (5 - time_elapsed)
+        print(self.countdown_time)
+        if self.countdown_time <= 0:
+            self.countdown_active = False
 
     def start_game(self):
         # Starts the game.
         # Reset all players scores
         for player in self.players:
             player.score = 0
+
+        # setup countdown timer
+        self.countdown_time = 5
+        self.start_time = time.time()
+        self.countdown_active = True
+
         self.game_in_progress = True
         self.server.start_game()
 
