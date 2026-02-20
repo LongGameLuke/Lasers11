@@ -96,5 +96,5 @@ if __name__ == "__main__":
     
     # Exit program after loop broken
     db.disconnect_from_db()
-    print("\n\nGoodbye.")
+    print("\nGoodbye.")
     exit(1)
