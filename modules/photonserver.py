@@ -100,7 +100,7 @@ class PhotonServer:
         clientMsg = f"Message from Client: {message}"
         clientIP  = f"Client IP Address: {address}"
 
-        print(f"{clientIP}: {clientMsg}")
+        # print(f"{clientIP}: {clientMsg}")
 
-        hit_equipment = message.split(":")
-        self.event_player_tag(hit_equipment[0], hit_equipment[1])
+        # hit_equipment = message.split(":")
+        # self.event_player_tag(hit_equipment[0], hit_equipment[1])
