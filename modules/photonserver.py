@@ -22,6 +22,7 @@ class PhotonServer:
 
         # Datagram socket
         self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.udp_server_socket.settimeout(1)
 
         # Bind to address and ports
         self.udp_server_socket.bind((self.host, self.receive_port))
@@ -94,13 +95,17 @@ class PhotonServer:
 
     def update(self) -> None:
         # Update that runs every time the game updates
-        bytesAddressPair = self.udp_server_socket.recvfrom(self.bufferSize)
-        message = (bytesAddressPair[0]).decode()
-        address = bytesAddressPair[1]
-        clientMsg = f"Message from Client: {message}"
-        clientIP  = f"Client IP Address: {address}"
+        try:
+            bytesAddressPair = self.udp_server_socket.recvfrom(self.bufferSize)
+            message = (bytesAddressPair[0]).decode()
+            address = bytesAddressPair[1]
+            clientMsg = f"Message from Client: {message}"
+            clientIP  = f"Client IP Address: {address}"
 
-        # print(f"{clientIP}: {clientMsg}")
+            # print(f"{clientIP}: {clientMsg}")
 
-        # hit_equipment = message.split(":")
-        # self.event_player_tag(hit_equipment[0], hit_equipment[1])
+            # hit_equipment = message.split(":")
+            # self.event_player_tag(hit_equipment[0], hit_equipment[1])
+        except:
+            # do nothing when udp timeout
+            pass

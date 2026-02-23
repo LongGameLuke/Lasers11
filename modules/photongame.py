@@ -33,8 +33,7 @@ class PhotonGame:
         elif self.countdown_active:
             self.countdown_timer_update()
         elif self.game_in_progress:
-            # self.server.update()      # Causes program to hang when waiting for udp packet
-            pass
+            self.server.update()
 
         # Update UI
         window_open = self.ui.update()
