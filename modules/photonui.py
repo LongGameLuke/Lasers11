@@ -110,7 +110,7 @@ class PlayerEntry(Scene):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F5:
                     self.game.start_game_flag = True
-                    self.manager.switch("GAME_ACTION")
+                    self.manager.switch("COUNTDOWN_TIMER")
                 elif event.key == pygame.K_F7:
                     self.manager.switch("NETWORK_CONFIG")
                 elif event.key == pygame.K_F12:
@@ -322,6 +322,34 @@ class PlayerEntry(Scene):
             rect.topleft = (x, y)
         self.screen.blit(surf, rect)
 
+class StartGame_Countdown(Scene):
+    def enter(self):
+        self.font= pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+
+    def update(self):
+        if not self.game.countdown_active and not self.game.start_game_flag:
+            self.manager.switch("GAME_ACTION")
+
+    def render(self):
+        self.screen.fill(BACKGROUND)
+        self.draw_text(
+            f"GAME IS STARTING IN: {int(self.game.countdown_time)} SECONDS!",
+            self.font,
+            LIGHT_GREEN,
+            SCREEN_WIDTH//2,
+            SCREEN_HEIGHT//2,
+            center = True
+        )
+
+    def draw_text(self, text, font, color, x, y, center=False):
+        surf = font.render(str(text), True, color)
+        rect = surf.get_rect()
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+        self.screen.blit(surf, rect)
+
 class GameAction(Scene):
     def enter(self):
         self.font = pygame.font.SysFont(None, FONT_SIZE)
@@ -458,8 +486,9 @@ class PhotonUI:
         self.scene_manager = SceneManager(game, self.screen)
         self.scene_manager.add("SPLASH", SplashScreen)
         self.scene_manager.add("PLAYER_ENTRY", PlayerEntry)
-        self.scene_manager.add("GAME_ACTION", GameAction)
         self.scene_manager.add("NETWORK_CONFIG", NetworkConfig)
+        self.scene_manager.add("COUNTDOWN_TIMER", StartGame_Countdown)
+        self.scene_manager.add("GAME_ACTION", GameAction)
         self.scene_manager.switch("SPLASH")
 
     def kill_pygame(self):
