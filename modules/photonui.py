@@ -9,7 +9,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 BACKGROUND = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (139, 0, 0)
+RED = (255, 0, 0)
 GREEN = (0, 100, 0)
 LIGHT_GREEN = (130, 255, 76)
 YELLOW = (255, 255, 0)
@@ -362,19 +362,54 @@ class StartGame_Countdown(Scene):
 
 class GameAction(Scene):
     def enter(self):
-        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.font = pygame.font.SysFont(None, 32)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
         self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
 
-        self.image = None
-        img = pygame.image.load("assets/images/logo.jpg")
-        self.image = pygame.transform.scale(img, (200, 200))
-
     def render(self):
         self.screen.fill(BACKGROUND)
-        self.screen.blit(self.image, (10, 10))
-        self.draw_text("GAME ON!", self.header_font, LIGHT_GREEN, 
-                        SCREEN_WIDTH//2, 100, center=True)
+
+        self.draw_text("RED TEAM", self.header_font, RED, 
+                        SCREEN_WIDTH//4, 100, center=True)
+
+        self.draw_text("GREEN TEAM", self.header_font, LIGHT_GREEN, 
+                        3*SCREEN_WIDTH//4, 100, center=True)
+
+        # Set up starting Y pos and spacing for player lists
+        start_y = 150
+        line_spacing = 35
+        
+        red_y = start_y
+        green_y = start_y
+
+        for p in self.game.players:
+            if p.team == 'Red':
+                self.draw_text(
+                    f"{p.name}",
+                    self.font,
+                    RED,
+                    SCREEN_WIDTH//4,
+                    red_y,
+                    center=True
+                ) 
+                red_y += line_spacing
+            else:
+                self.draw_text(
+                    f"{p.name}",
+                    self.font,
+                    LIGHT_GREEN,
+                    3*SCREEN_WIDTH//4,
+                    green_y,
+                    center=True
+                )
+                green_y += line_spacing
+
+        # Draw box for game events
+        box_width = SCREEN_WIDTH // 2
+        box_x = (SCREEN_WIDTH - box_width) // 2 
+        box_y = (SCREEN_HEIGHT - 200)
+        box_height = (SCREEN_HEIGHT - 100)
+        pygame.draw.rect(self.screen, (255, 255, 255), (box_x, box_y, box_width, box_height), 3)
 
     def handle_events(self, events):
         for event in events:
