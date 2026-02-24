@@ -66,7 +66,6 @@ class PhotonDB:
             log_process(f"Couldn't find player with PID: {pid}")
             return False
 
-
 # Database Menu
 if __name__ == "__main__":
     db:Union[None, PhotonDB] = None

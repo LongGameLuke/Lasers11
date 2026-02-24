@@ -40,7 +40,6 @@ class PhotonGame:
         if not window_open:
             self.ui.kill_pygame()
             
-
         # Keep game running
         return window_open
 
@@ -109,7 +108,6 @@ class PhotonGame:
             return
 
         # Ensure players are on opposing teams
-        # 
         if tagger.team != tagged.team:
             tagger.score += POINTS_PER_TAG
             self.server.broadcast_tagged(tagged.equipment_id)

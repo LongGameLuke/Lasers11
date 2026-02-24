@@ -33,13 +33,11 @@ class PhotonServer:
         log_process(f"Server listening on port {self.receive_port}/udp")
         log_process(f"Server broadcasting on port {self.broadcast_port}/udp")
 
-
     def broadcast_message(self, message:str) -> None:
         # Broadcasts a message to all clients
         encoded_message = str.encode(message)
         log_game_event(f"Broadcast: '{message}'")
         self.udp_server_socket.sendto(encoded_message, (self.host, self.broadcast_port))
-    
 
     def start_game(self) -> None:
         # Send the start game code to clients
@@ -47,14 +45,12 @@ class PhotonServer:
         start_code = str.encode(SERVER_CODES.START.value)
         self.udp_server_socket.sendto(start_code, (self.host, self.broadcast_port))
 
-
     def end_game(self) -> None:
         # Send the end game code to clients 3 times
         log_process("Ending current game")
         end_code = str.encode(SERVER_CODES.END.value)
         for i in range(3):
             self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
-
 
     def set_network(self, host=None, broadcast=None, receive=None) -> None:
         # Sets current ports & host to new ones in event user changes them
@@ -68,7 +64,6 @@ class PhotonServer:
         self.udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_server_socket.bind((self.host, self.receive_port))
         self.log_current_ports()
-
 
     def event_player_tag(self, equipment_tagger:int, equipment_tagged:int):
         tagger = None
@@ -88,11 +83,9 @@ class PhotonServer:
         # Let PhotonGame handle game logic
         self.game.player_tagged(tagger, tagged_player)
 
-    
     def broadcast_tagged(self):
         # Broadcast the tagged signal to equipment that needs to "shut down"
         self.broadcast_message(hit_equipment[1])
-
 
     def update(self) -> None:
         # Update that runs every time the game updates

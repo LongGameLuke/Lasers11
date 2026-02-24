@@ -80,8 +80,6 @@ if __name__ == "__main__":
 
     # Load database connection
     db = load_database(config)
-    
-    # print("\nPress Ctrl+c to exit program.\n")
 
     # Create game using initialized data
     game = PhotonGame(db, config["photon"]["network"]["host"], ports)
