@@ -24,7 +24,7 @@ class PhotonGame:
         # Countdown vars
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
-        self.countdown_timer_length = 6
+        self.countdown_timer_length = 31 # This needs to be 1 second higher than the target timer length for format reasons
         self.countdown_start_time:float = 0.0
     
     def update(self) -> bool:
@@ -61,7 +61,7 @@ class PhotonGame:
             player.score = 0
 
         # setup countdown timer
-        self.countdown_time = 6 # This needs to be 6 to count down for a full 5 seconds
+        self.countdown_time = self.countdown_timer_length
         self.countdown_start_time = time.time()
         self.countdown_active = True
         log_game_event(f"Game beginning in {self.countdown_time - 1} seconds...")
