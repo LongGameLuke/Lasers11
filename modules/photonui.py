@@ -324,7 +324,8 @@ class PlayerEntry(Scene):
 
 class StartGame_Countdown(Scene):
     def enter(self):
-        self.font= pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+        self.font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+        self.countdown_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE + 40)
 
     def update(self):
         if not self.game.countdown_active and not self.game.start_game_flag:
@@ -333,8 +334,17 @@ class StartGame_Countdown(Scene):
     def render(self):
         self.screen.fill(BACKGROUND)
         self.draw_text(
-            f"GAME IS STARTING IN: {int(self.game.countdown_time)} SECONDS!",
+            f"GAME IS STARTING IN:",
             self.font,
+            WHITE,
+            SCREEN_WIDTH//2,
+            SCREEN_HEIGHT//3,
+            center = True
+        )
+
+        self.draw_text(
+            int(self.game.countdown_time),
+            self.countdown_font,
             LIGHT_GREEN,
             SCREEN_WIDTH//2,
             SCREEN_HEIGHT//2,
