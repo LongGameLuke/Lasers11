@@ -6,8 +6,8 @@ from modules.consolelog import log_game_event, log_game_tag_event
 import time
 from math import ceil
 
-POINTS_PER_TAG = 50
-POINTS_PER_BASE_TAG = 150
+POINTS_PER_TAG = 10
+POINTS_PER_BASE_TAG = 100
 
 class PhotonGame:
     # This class runs the actual game after initialization
@@ -103,7 +103,7 @@ class PhotonGame:
         # Handles event when player is tagged
 
         # Prevent sudoku
-        if tagger == tagger:
+        if tagger is tagged:
             return
 
         # Ensure players are on opposing teams
