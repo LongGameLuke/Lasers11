@@ -1,5 +1,6 @@
 import psycopg2
 from typing import Union
+from modules.consolelog import *
 
 class PhotonDB:
     def __init__(self, dbname:str="photon"):
@@ -47,11 +48,11 @@ class PhotonDB:
         if pid_test == None:
             self.cur.execute("INSERT into players(id, codename) VALUES (%s, %s)", (pid, player_name))
             self.conn.commit()
-            print(f"\nAdded {player_name} to database with id: {pid}")
+            log_process(f"Added {player_name} to database with id: {pid}")
             return True
         else:
-            print(f"\nFound player with PID: {pid}")
-            return False
+           log_process(f"Found player with PID: {pid}")
+        return False
 
     def remove_player(self, pid:int) -> bool:
         # Check if pid exists. If so, remove the entry
@@ -59,10 +60,10 @@ class PhotonDB:
         if pid_test != None and len(pid_test) >= 1:
             self.cur.execute("DELETE FROM players WHERE id = %s", (pid,))
             self.conn.commit()
-            print(f"\nRemoved player from database with id: {pid}")
+            log_process(f"Removed player from database with id: {pid}")
             return True
         else:
-            print(f"\nCouldn't find player with PID: {pid}")
+            log_process(f"Couldn't find player with PID: {pid}")
             return False
 
 
