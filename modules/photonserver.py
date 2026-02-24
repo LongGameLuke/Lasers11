@@ -37,6 +37,7 @@ class PhotonServer:
     def broadcast_message(self, message:str) -> None:
         # Broadcasts a message to all clients
         encoded_message = str.encode(message)
+        log_game_event(f"Broadcast: '{message}'")
         self.udp_server_socket.sendto(encoded_message, (self.host, self.broadcast_port))
     
 

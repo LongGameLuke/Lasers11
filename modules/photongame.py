@@ -80,6 +80,7 @@ class PhotonGame:
         self.players.clear()
 
     def add_new_player(self, pid: int, name: str, equipment_id: int, team: str) -> bool: 
+        # Adds new player to the player list
         for p in self.players:
             if p.pid == pid:
                 raise ValueError(f"Player is already in game!")
@@ -96,6 +97,7 @@ class PhotonGame:
         new_player.equipment_id = equipment_id
         new_player.team = team
         self.players.append(new_player)
+        self.server.broadcast_message(str(equipment_id))
         # Function returns false anytime player is already in database
         return first_time_player
     
