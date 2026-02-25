@@ -20,12 +20,16 @@ class PhotonServer:
         # Ref to parent Photongame
         self.game = game
 
-        # Datagram socket
-        self.udp_server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-        self.udp_server_socket.settimeout(1)
+        # Set up sockets
+        self.udp_receive = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.udp_broadcast = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.start_sockets()
 
-        # Bind to address and ports
-        self.udp_server_socket.bind((self.host, self.receive_port))
+    def start_sockets(self):
+        # Sets up server network and binds system ports
+        self.udp_receive.settimeout(1)  # Program will hang if there is no timeout
+        self.udp_receive.bind((self.host, self.receive_port))
+        self.udp_broadcast.bind((self.host, self.broadcast_port))
         self.log_current_ports()
     
     def log_current_ports(self):
@@ -37,33 +41,37 @@ class PhotonServer:
         # Broadcasts a message to all clients
         encoded_message = str.encode(message)
         log_game_event(f"Broadcast: '{message}'")
-        self.udp_server_socket.sendto(encoded_message, (self.host, self.broadcast_port))
+        self.udp_broadcast.sendto(encoded_message, (self.host, self.broadcast_port))
 
     def start_game(self) -> None:
         # Send the start game code to clients
         log_process(f"Starting new game with {len(self.game.players)} players!")
         start_code = str.encode(SERVER_CODES.START.value)
-        self.udp_server_socket.sendto(start_code, (self.host, self.broadcast_port))
+        self.udp_broadcast.sendto(start_code, (self.host, self.broadcast_port))
 
     def end_game(self) -> None:
         # Send the end game code to clients 3 times
         log_process("Ending current game")
         end_code = str.encode(SERVER_CODES.END.value)
         for i in range(3):
-            self.udp_server_socket.sendto(end_code, (self.host, self.broadcast_port))
+            self.udp_broadcast.sendto(end_code, (self.host, self.broadcast_port))
 
     def set_network(self, host=None, broadcast=None, receive=None) -> None:
         # Sets current ports & host to new ones in event user changes them
+        # Close old netowrk binds
+        self.udp_receive.close()
+        self.udp_receive.close()
+        # Load new network info
         if broadcast != None:
             self.broadcast_port = broadcast
         if receive != None:
              self.receive_port = receive
         if host != None:
              self.host = host
-
-        self.udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.udp_server_socket.bind((self.host, self.receive_port))
-        self.log_current_ports()
+        # Start sockets with new host/ports
+        self.udp_receive = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.udp_broadcast = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.start_sockets()
 
     def event_player_tag(self, equipment_tagger:int, equipment_tagged:int):
         tagger = None
@@ -90,7 +98,7 @@ class PhotonServer:
     def update(self) -> None:
         # Update that runs every time the game updates
         try:
-            bytesAddressPair = self.udp_server_socket.recvfrom(self.bufferSize)
+            bytesAddressPair = self.udp_receive.recvfrom(self.bufferSize)
             message = (bytesAddressPair[0]).decode()
             address = bytesAddressPair[1]
             clientMsg = f"Message from Client: {message}"
