@@ -1,6 +1,7 @@
 import socket
 from enum import Enum
 from modules.consolelog import *
+import time
 
 class SERVER_CODES(Enum):
     START = "202"
@@ -29,7 +30,7 @@ class PhotonServer:
         # Sets up server network and binds system ports
         self.udp_receive.settimeout(1)  # Program will hang if there is no timeout
         self.udp_receive.bind((self.host, self.receive_port))
-        self.udp_broadcast.bind((self.host, self.broadcast_port))
+        #self.udp_broadcast.bind((self.host, self.broadcast_port))  # binding this breaks the traffic gen
         self.log_current_ports()
     
     def log_current_ports(self):
@@ -75,39 +76,37 @@ class PhotonServer:
 
     def event_player_tag(self, equipment_tagger:int, equipment_tagged:int):
         tagger = None
-        tagged_player = None
+        tagged = None
 
         # Find player profile assosiated with equipment ids
         for player in self.game.players:
             if player.equipment_id == equipment_tagger:
                 tagger = player
             elif player.equipment_id == equipment_tagged:
-                tagged_player = player
+                tagged = player
             
             # Exit for loop if profiles are found
-            if tagger != None and tagged_player != None:
+            if tagger != None and tagged != None:
                 continue
         
         # Let PhotonGame handle game logic
-        self.game.player_tagged(tagger, tagged_player)
+        self.game.event_player_tag(tagger, tagged)
 
-    def broadcast_tagged(self):
+    def broadcast_tagged(self, equipment_id:int):
         # Broadcast the tagged signal to equipment that needs to "shut down"
-        self.broadcast_message(hit_equipment[1])
+        self.broadcast_message(str(equipment_id))
 
     def update(self) -> None:
         # Update that runs every time the game updates
         try:
+            # Gather udp data from receive port
             bytesAddressPair = self.udp_receive.recvfrom(self.bufferSize)
             message = (bytesAddressPair[0]).decode()
             address = bytesAddressPair[1]
-            clientMsg = f"Message from Client: {message}"
-            clientIP  = f"Client IP Address: {address}"
 
-            # print(f"{clientIP}: {clientMsg}")
-
-            # hit_equipment = message.split(":")
-            # self.event_player_tag(hit_equipment[0], hit_equipment[1])
+            # Split received data
+            hit_equipment = message.split(":")
+            self.event_player_tag(int(hit_equipment[0]), int(hit_equipment[1]))
         except:
             # do nothing when udp timeout
             pass

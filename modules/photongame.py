@@ -24,7 +24,7 @@ class PhotonGame:
         # Countdown vars
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
-        self.countdown_timer_length = 31 # This needs to be 1 second higher than the target timer length for format reasons
+        self.countdown_timer_length = 5 # This needs to be 1 second higher than the target timer length for format reasons
         self.countdown_start_time:float = 0.0
     
     def update(self) -> bool:
@@ -49,6 +49,7 @@ class PhotonGame:
         self.countdown_time = (self.countdown_timer_length - time_elapsed)
         if ceil(self.countdown_time) == 1:
             self.countdown_active = False
+            self.server.start_game()    # broadcast start signal to clients
             log_game_event("Countdown ended. LET IT RIP!")
 
     def start_game(self):
@@ -67,7 +68,6 @@ class PhotonGame:
         log_game_event(f"Game beginning in {self.countdown_time - 1} seconds...")
 
         self.game_in_progress = True
-        self.server.start_game()
 
     def end_game(self):
         # Ends the in progress game
@@ -102,12 +102,12 @@ class PhotonGame:
     
     def event_player_tag(self, tagger:Player, tagged:Player):
         # Handles event when player is tagged
-
         # Prevent sudoku
-        if tagger is tagged:
+        if tagger.pid == tagged.pid:
             return
 
         # Ensure players are on opposing teams
         if tagger.team != tagged.team:
             tagger.score += POINTS_PER_TAG
+            log_game_event(f"{tagger.name} >>> {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
