@@ -47,15 +47,13 @@ class PhotonServer:
     def start_game(self) -> None:
         # Send the start game code to clients
         log_process(f"Starting new game with {len(self.game.players)} players!")
-        start_code = str.encode(SERVER_CODES.START.value)
-        self.udp_broadcast.sendto(start_code, (self.host, self.broadcast_port))
+        self.broadcast_message(SERVER_CODES.START.value)
 
     def end_game(self) -> None:
         # Send the end game code to clients 3 times
         log_process("Ending current game")
-        end_code = str.encode(SERVER_CODES.END.value)
         for i in range(3):
-            self.udp_broadcast.sendto(end_code, (self.host, self.broadcast_port))
+            self.broadcast_message(SERVER_CODES.END.value)
 
     def set_network(self, host=None, broadcast=None, receive=None) -> None:
         # Sets current ports & host to new ones in event user changes them
@@ -94,6 +92,7 @@ class PhotonServer:
 
     def broadcast_tagged(self, equipment_id:int):
         # Broadcast the tagged signal to equipment that needs to "shut down"
+        # This is kinda a silly method to have
         self.broadcast_message(str(equipment_id))
 
     def update(self) -> None:
