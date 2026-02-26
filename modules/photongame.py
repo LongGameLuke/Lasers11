@@ -15,6 +15,7 @@ class PhotonGame:
         self.ui = PhotonUI(self)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         # Game vars
         self.game_in_progress:bool = False
         self.players = []
@@ -22,6 +23,8 @@ class PhotonGame:
         # Run UI
         self.ui.run()
 =======
+=======
+>>>>>>> f0028dfa280c2b17b96e32acb75aa5da70a297e5
         # Game const vars
         self.POINTS_PLAYER_TAG = config["photon"]["game"]["points-player-tag"]
         self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
