@@ -51,7 +51,7 @@ class PhotonDB:
             log_process(f"Added {player_name} to database with id: {pid}")
             return True
         else:
-           log_process(f"Found player with PID: {pid}")
+           log_process(f"{player_name} joined the game")
         return False
 
     def remove_player(self, pid:int) -> bool:
