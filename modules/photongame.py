@@ -14,17 +14,13 @@ class PhotonGame:
         self.server = PhotonServer(server_host, server_ports, self)
         self.ui = PhotonUI(self)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         # Game vars
         self.game_in_progress:bool = False
         self.players = []
         
         # Run UI
         self.ui.run()
-=======
-=======
->>>>>>> f0028dfa280c2b17b96e32acb75aa5da70a297e5
+        
         # Game const vars
         self.POINTS_PLAYER_TAG = config["photon"]["game"]["points-player-tag"]
         self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
@@ -40,7 +36,6 @@ class PhotonGame:
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
         self.countdown_start_time:float = 0.0
->>>>>>> f0028df (Improved code readability)
     
     def update(self) -> bool:
         self.server.update()
