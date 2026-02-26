@@ -30,6 +30,7 @@ class PhotonDB:
             return False
 
     def get_all_players(self) -> dict:
+        # Returns all players currently in the database
         query = "SELECT * FROM players"
         self.cur.execute(query)
         players = self.cur.fetchall()
