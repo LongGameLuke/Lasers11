@@ -1,6 +1,6 @@
 from modules.photondb import PhotonDB
 from modules.photonserver import PhotonServer
-from modules.photonui import PhotonUI
+from modules.ui import PhotonUI
 from modules.player import Player
 from modules.consolelog import log_game_event, log_game_tag_event
 import time
