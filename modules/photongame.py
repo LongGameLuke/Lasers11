@@ -13,18 +13,20 @@ class PhotonGame:
         self.server = PhotonServer(server_host, server_ports, self)
         self.ui = PhotonUI(self)
 
-        # Game vars
+        # Game const vars
         self.POINTS_PLAYER_TAG = config["photon"]["game"]["points-player-tag"]
         self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
         self.GAME_LENGTH = config["photon"]["game"]["game-length"]
+
+        # Game status vars
         self.start_game_flag = False
         self.game_in_progress:bool = False
         self.players = []
 
         # Countdown vars
+        self.COUNTDOWN_TIMER_LENGTH = (config["photon"]["game"]["start-countdown-length"] + 1) # This needs to be 1 second higher than the target timer length for format reasons
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
-        self.COUNTDOWN_TIMER_LENGTH = (config["photon"]["game"]["start-countdown-length"] + 1) # This needs to be 1 second higher than the target timer length for format reasons
         self.countdown_start_time:float = 0.0
     
     def update(self) -> bool:
