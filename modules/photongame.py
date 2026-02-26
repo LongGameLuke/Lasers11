@@ -6,17 +6,17 @@ from modules.consolelog import log_game_event, log_game_tag_event
 import time
 from math import ceil
 
-POINTS_PER_TAG = 10
-POINTS_PER_BASE_TAG = 100
-
 class PhotonGame:
     # This class runs the actual game after initialization
-    def __init__(self, db:PhotonDB, server_host:str, server_ports):
+    def __init__(self, db:PhotonDB, config:dict, server_host:str, server_ports):
         self.db = db
         self.server = PhotonServer(server_host, server_ports, self)
         self.ui = PhotonUI(self)
 
         # Game vars
+        self.POINTS_PLAYER_TAG = config["photon"]["game"]["points-player-tag"]
+        self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
+        self.GAME_LENGTH = config["photon"]["game"]["game-length"]
         self.start_game_flag = False
         self.game_in_progress:bool = False
         self.players = []
@@ -24,7 +24,7 @@ class PhotonGame:
         # Countdown vars
         self.countdown_active:bool = False
         self.countdown_time:float = -1.0 # This is the var to use in UI
-        self.countdown_timer_length = 31 # This needs to be 1 second higher than the target timer length for format reasons
+        self.COUNTDOWN_TIMER_LENGTH = (config["photon"]["game"]["start-countdown-length"] + 1) # This needs to be 1 second higher than the target timer length for format reasons
         self.countdown_start_time:float = 0.0
     
     def update(self) -> bool:
@@ -46,7 +46,7 @@ class PhotonGame:
     def countdown_timer_update(self):
         # Perform game start countdown timer operation
         time_elapsed = (time.time() - self.countdown_start_time)
-        self.countdown_time = (self.countdown_timer_length - time_elapsed)
+        self.countdown_time = (self.COUNTDOWN_TIMER_LENGTH - time_elapsed)
         if ceil(self.countdown_time) == 1:
             self.countdown_active = False
             self.server.start_game()    # broadcast start signal to clients
@@ -62,7 +62,7 @@ class PhotonGame:
             player.score = 0
 
         # setup countdown timer
-        self.countdown_time = self.countdown_timer_length
+        self.countdown_time = self.COUNTDOWN_TIMER_LENGTH
         self.countdown_start_time = time.time()
         self.countdown_active = True
         log_game_event(f"Game beginning in {self.countdown_time - 1} seconds...")
@@ -108,6 +108,6 @@ class PhotonGame:
 
         # Ensure players are on opposing teams
         if tagger.team != tagged.team:
-            tagger.score += POINTS_PER_TAG
+            tagger.score += self.POINTS_PLAYER_TAG
             log_game_event(f"{tagger.name} >>> {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)

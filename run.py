@@ -82,7 +82,8 @@ if __name__ == "__main__":
     db = load_database(config)
 
     # Create game using initialized data
-    game = PhotonGame(db, config["photon"]["network"]["host"], ports)
+    host = config["photon"]["network"]["host"]
+    game = PhotonGame(db, config, host, ports)
 
     # Main program loop
     keep_running = True
