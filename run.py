@@ -59,7 +59,11 @@ def load_database(config:dict) -> PhotonDB:
     # Connect to the postgresql database
     try:
         log_process_start("Connecting to database")
-        db = PhotonDB(dbname=config["database"]["db-name"])
+        db = PhotonDB(
+            port=config["database"]["port"],
+            user=config["database"]["user"],
+            dbname=config["database"]["db-name"]
+            )
         db.connect_to_database()
         log_process_complete("Connected to database")
         return db
@@ -80,10 +84,11 @@ if __name__ == "__main__":
 
     # Load database connection
     db = load_database(config)
+    
+    # print("\nPress Ctrl+c to exit program.\n")
 
     # Create game using initialized data
-    host = config["photon"]["network"]["host"]
-    game = PhotonGame(db, config, host, ports)
+    game = PhotonGame(db, config["photon"]["network"]["host"], ports)
 
     # Main program loop
     keep_running = True
@@ -95,5 +100,5 @@ if __name__ == "__main__":
     
     # Exit program after loop broken
     db.disconnect_from_db()
-    print("\nGoodbye.")
+    print("\n\nGoodbye.")
     exit(1)
