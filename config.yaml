@@ -6,7 +6,7 @@ photon:
   game:
     start-countdown-length: 30
     game-length: 360
-    points-player-tag: 50
+    points-player-tag: 10
     points-base-tag: 100
 database:
   db-name: photon

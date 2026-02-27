@@ -123,7 +123,7 @@ class PhotonGame:
                 self.green_team_score += self.POINTS_PLAYER_TAG
 
             log_game_event(f"{tagger.name} >>> {tagged.name}")
-            self.game_events.append(f"{tagger.name} tagged {tagged.name}!")
+            self.game_events.append(f"{tagger.name} tagged {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
         else:
             tagger.score -= self.POINTS_PLAYER_TAG
@@ -135,6 +135,6 @@ class PhotonGame:
                 self.green_team_score -= self.POINTS_PLAYER_TAG
 
             log_game_event(f"{tagger.name} >>> {tagged.name}")
-            self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}!")
+            self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
             self.server.broadcast_tagged(tagger.equipment_id)
