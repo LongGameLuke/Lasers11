@@ -34,7 +34,7 @@ class GameAction(Scene):
         for p in self.game.players:
             if p.team == 'Red':
                 self.draw_text(
-                    f"{p.name}",
+                    f"{p.name}  -  {p.score}",
                     self.font,
                     RED,
                     SCREEN_WIDTH//4,
@@ -44,7 +44,7 @@ class GameAction(Scene):
                 red_y += line_spacing
             else:
                 self.draw_text(
-                    f"{p.name}",
+                    f"{p.name}  -  {p.score}",
                     self.font,
                     LIGHT_GREEN,
                     3*SCREEN_WIDTH//4,

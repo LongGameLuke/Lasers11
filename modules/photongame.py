@@ -107,7 +107,7 @@ class PhotonGame:
         if tagger.pid == tagged.pid:
             return
 
-        # Ensure players are on opposing teams
+        # If players are enemies, tagger gets points. For friendly fire, both players lose points.
         if tagger.team != tagged.team:
             tagger.score += self.POINTS_PLAYER_TAG
             log_game_event(f"{tagger.name} >>> {tagged.name}")
