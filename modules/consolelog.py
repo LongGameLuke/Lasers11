@@ -25,3 +25,9 @@ def log_process_complete(message):
 
 def log_process(message):
     print(f"[{Color.LIGHT_BLUE.value}***{Color.RESET.value}] {message}")
+
+def log_game_event(message):
+    print(f"[{Color.RED.value}-={Color.GREEN.value}Photon{Color.RED.value}=-{Color.RESET.value}] {message}")
+
+def log_game_tag_event(player1, player2):
+    pass

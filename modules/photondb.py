@@ -1,11 +1,9 @@
 import psycopg2
 from typing import Union
-from getpass import getpass # replacement for input() when inputting passwords
+from modules.consolelog import *
 
 class PhotonDB:
-    def __init__(self, user:str, port:int=5432, dbname:str="photon"):
-        self.port = port
-        self.user = user
+    def __init__(self, dbname:str="photon"):
         self.dbname = dbname
         self.conn = None
         self.cur = None
@@ -14,8 +12,7 @@ class PhotonDB:
         try:
             # Connect to database and create cursor
             self.conn = psycopg2.connect(
-                dbname=self.dbname,
-                user=self.user
+                dbname=self.dbname
             )
             self.cur = self.conn.cursor()
             return True
@@ -33,6 +30,7 @@ class PhotonDB:
             return False
 
     def get_all_players(self) -> dict:
+        # Returns all players currently in the database
         query = "SELECT * FROM players"
         self.cur.execute(query)
         players = self.cur.fetchall()
@@ -51,11 +49,11 @@ class PhotonDB:
         if pid_test == None:
             self.cur.execute("INSERT into players(id, codename) VALUES (%s, %s)", (pid, player_name))
             self.conn.commit()
-            print(f"\nAdded {player_name} to database with id: {pid}")
+            log_process(f"Added {player_name} to database with id: {pid}")
             return True
         else:
-            print(f"\nFound player with PID: {pid}")
-            return False
+           log_process(f"{player_name} joined the game")
+        return False
 
     def remove_player(self, pid:int) -> bool:
         # Check if pid exists. If so, remove the entry
@@ -63,12 +61,11 @@ class PhotonDB:
         if pid_test != None and len(pid_test) >= 1:
             self.cur.execute("DELETE FROM players WHERE id = %s", (pid,))
             self.conn.commit()
-            print(f"\nRemoved player from database with id: {pid}")
+            log_process(f"Removed player from database with id: {pid}")
             return True
         else:
-            print(f"\nCouldn't find player with PID: {pid}")
+            log_process(f"Couldn't find player with PID: {pid}")
             return False
-
 
 # Database Menu
 if __name__ == "__main__":
@@ -94,9 +91,7 @@ if __name__ == "__main__":
 
         if menu_choice == 1:
             # Connect to database
-            username = input("Database Username: ")
-            password = getpass("Database Password: ")
-            db = PhotonDB(user=username, password=password)
+            db = PhotonDB("photon")
             db.connect_to_database()
             print(f"Connected to database({db.dbname})")
         elif menu_choice == 2:

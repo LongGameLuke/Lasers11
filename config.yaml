@@ -3,9 +3,10 @@ photon:
     host: 127.0.0.1
     broadcast-port: 7500
     receive-port: 7501
+  game:
+    start-countdown-length: 30
+    game-length: 360
+    points-player-tag: 50
+    points-base-tag: 100
 database:
-  host: 127.0.0.1
-  port: 5432
-  user: student # !IMPORTANT change in production
-  password: student # !IMPORTANT change in production
   db-name: photon
