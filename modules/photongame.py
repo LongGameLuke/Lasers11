@@ -134,13 +134,16 @@ class PhotonGame:
         return total_score
     
     def event_base_tag(self, tagger:Player, base_code:int):
+        # Handles base tag event
         if tagger.team == "Red" and base_code == int(SERVER_CODES.GREEN_BASE_HIT.value):
             tagger.score += self.POINTS_BASE_TAG
+            tagger.base_tag = True
             log_game_event(f"{tagger.name} >>> Green Base")
             self.game_events.append(f"{tagger.name} tagged Green Base")
             self.server.broadcast_tagged(int(SERVER_CODES.GREEN_BASE_HIT.value))
         elif tagger.team == "Green" and base_code == int(SERVER_CODES.RED_BASE_HIT.value):
             tagger.score += self.POINTS_BASE_TAG
+            tagger.base_tag = True
             log_game_event(f"{tagger.name} >>> Red Base")
             self.game_events.append(f"{tagger.name} tagged Red Base")
             self.server.broadcast_tagged(int(SERVER_CODES.RED_BASE_HIT.value))
