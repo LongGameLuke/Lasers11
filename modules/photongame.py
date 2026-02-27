@@ -1,5 +1,5 @@
 from modules.photondb import PhotonDB
-from modules.photonserver import PhotonServer
+from modules.photonserver import PhotonServer, SERVER_CODES
 from modules.ui import PhotonUI
 from modules.player import Player
 from modules.consolelog import log_game_event, log_game_tag_event
@@ -134,11 +134,11 @@ class PhotonGame:
         return total_score
     
     def event_base_tag(self, tagger:Player, base_code:int):
-        if tagger.team == "Red" and base_code == server.GREEN_BASE_HIT:
+        if tagger.team == "Red" and base_code == int(SERVER_CODES.GREEN_BASE_HIT.value):
             tagger.score += self.POINTS_BASE_TAG
             log_game_event(f"{tagger.name} >>> Green Base")
             self.game_events.append(f"{tagger.name} tagged Green Base")
-        elif tagger.team == "Green" and base_code == server.RED_BASE_HIT:
+        elif tagger.team == "Green" and base_code == int(SERVER_CODES.RED_BASE_HIT.value):
             tagger.score += self.POINTS_BASE_TAG
             log_game_event(f"{tagger.name} >>> Red Base")
             self.game_events.append(f"{tagger.name} tagged Red Base")

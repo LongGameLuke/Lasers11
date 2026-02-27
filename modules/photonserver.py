@@ -121,7 +121,7 @@ class PhotonServer:
             hit_equipment = message.split(":")
 
             # Determine if base or player tag
-            if hit_equipment[1] == RED_BASE_HIT or hit_equipment[1] == GREEN_BASE_HIT:
+            if hit_equipment[1] == SERVER_CODES.RED_BASE_HIT.value or hit_equipment[1] == SERVER_CODES.GREEN_BASE_HIT.value:
                 self.event_base_tag(int(hit_equipment[0]), int(hit_equipment[1]))
             else:
                 self.event_player_tag(int(hit_equipment[0]), int(hit_equipment[1]))
