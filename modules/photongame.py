@@ -3,6 +3,7 @@ from modules.photonserver import PhotonServer, SERVER_CODES
 from modules.ui import PhotonUI
 from modules.player import Player
 from modules.consolelog import log_game_event, log_game_tag_event
+from modules.timer import Timer
 import time
 from math import ceil
 
@@ -16,6 +17,7 @@ class PhotonGame:
         # Game const vars
         self.POINTS_PLAYER_TAG = config["photon"]["game"]["points-player-tag"]
         self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
+        self.COUNTDOWN_LENGTH = config["photon"]["game"]["start-countdown-length"]
         self.GAME_LENGTH = config["photon"]["game"]["game-length"]
 
         # Game status vars
@@ -23,19 +25,28 @@ class PhotonGame:
         self.game_in_progress:bool = False
         self.players = []
         self.game_events = []
-
-        # Countdown vars
-        self.COUNTDOWN_TIMER_LENGTH = (config["photon"]["game"]["start-countdown-length"] + 1) # This needs to be 1 second higher than the target timer length for format reasons
-        self.countdown_active:bool = False
-        self.countdown_time:float = -1.0 # This is the var to use in UI
-        self.countdown_start_time:float = 0.0
+        self.timer = Timer(self.COUNTDOWN_LENGTH) # Used for countdown and game time
     
     def update(self) -> bool:
         # Game update that runs each loop
+        # Update timer
+        if self.timer.completed == True and self.game_in_progress == False:
+            # Start game timer
+            self.game_in_progress = True
+            self.timer.reset()
+            self.timer.length = float(self.GAME_LENGTH)
+            self.timer.start()
+            log_game_event("Countdown ended. LET IT RIP!")
+            self.server.start_game() # Tell server to broadcast start signal
+        elif self.timer.completed == True and self.game_in_progress == True:
+            # Reset timer and end game
+            self.end_game()
+            self.timer.reset()
+            self.timer.length = float(self.COUNTDOWN_LENGTH)
+        self.timer.update()
+
         if self.start_game_flag:
             self.start_game()
-        elif self.countdown_active:
-            self.countdown_timer_update()
         elif self.game_in_progress:
             self.server.update()
 
@@ -47,15 +58,6 @@ class PhotonGame:
         # Keep game running
         return window_open
 
-    def countdown_timer_update(self):
-        # Perform game start countdown timer operation
-        time_elapsed = (time.time() - self.countdown_start_time)
-        self.countdown_time = (self.COUNTDOWN_TIMER_LENGTH - time_elapsed)
-        if ceil(self.countdown_time) == 1:
-            self.countdown_active = False
-            self.server.start_game()    # broadcast start signal to clients
-            log_game_event("Countdown ended. LET IT RIP!")
-
     def start_game(self):
         # Starts the game.
         self.start_game_flag = False
@@ -64,14 +66,11 @@ class PhotonGame:
         # Reset all players scores
         for player in self.players:
             player.score = 0
+            player.base_tag = False
 
         # setup countdown timer
-        self.countdown_time = self.COUNTDOWN_TIMER_LENGTH
-        self.countdown_start_time = time.time()
-        self.countdown_active = True
-        log_game_event(f"Game beginning in {self.countdown_time - 1} seconds...")
-
-        self.game_in_progress = True
+        self.timer.start()
+        log_game_event(f"Game beginning in {self.COUNTDOWN_LENGTH} seconds...")
 
     def end_game(self):
         # Ends the in progress game

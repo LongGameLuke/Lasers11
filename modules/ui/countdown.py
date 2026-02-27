@@ -14,7 +14,7 @@ class StartGame_Countdown(Scene):
         self.countdown_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE + 40)
 
     def update(self):
-        if not self.game.countdown_active and not self.game.start_game_flag:
+        if not self.game.timer.active and not self.game.start_game_flag:
             self.manager.switch("GAME_ACTION")
 
     def render(self):
@@ -29,7 +29,7 @@ class StartGame_Countdown(Scene):
         )
 
         self.draw_text(
-            int(self.game.countdown_time),
+            int(self.game.timer.time),
             self.countdown_font,
             LIGHT_GREEN,
             SCREEN_WIDTH//2,
