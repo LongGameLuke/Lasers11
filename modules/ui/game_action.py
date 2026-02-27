@@ -16,11 +16,23 @@ class GameAction(Scene):
         self.screen.fill(BACKGROUND)
 
         # Team headers — Red on the left quarter, Green on the right quarter
-        self.draw_text("RED TEAM", self.header_font, RED,
-                        SCREEN_WIDTH//4, 100, center=True)
+        self.draw_text(
+            f"RED TEAM  -  {self.game.red_team_score}", 
+            self.header_font, 
+            RED,
+            SCREEN_WIDTH//4,
+            100,
+            center=True
+            )
 
-        self.draw_text("GREEN TEAM", self.header_font, LIGHT_GREEN,
-                        3*SCREEN_WIDTH//4, 100, center=True)
+        self.draw_text(
+            f"GREEN TEAM  -  {self.game.green_team_score}", 
+            self.header_font, 
+            LIGHT_GREEN,
+            3*SCREEN_WIDTH//4,
+            100, 
+            center=True
+            )
 
         # Starting position and spacing for the player name lists
         start_y = 150
