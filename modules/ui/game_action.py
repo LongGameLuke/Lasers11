@@ -81,8 +81,8 @@ class GameAction(Scene):
         self.draw_text("GAME EVENTS", self.label_font, WHITE, events_x + events_width // 2, events_y + 15, center=True)
 
         # Display 5 most recent events
-        for i, e in enumerate(self.game.game_events[-5:]):
-            y = events_y + (events_height // 3) + (i * 30)
+        for i, e in enumerate(self.game.game_events[-10:]):
+            y = events_y + (margin * 2) + (i * 30)
             self.draw_text(str(e), self.status_font, YELLOW, events_x + events_width // 2, y, center=True)
 
     def draw_score_pane(self, x, y, w, h, color, label, score):
