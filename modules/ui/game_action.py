@@ -24,6 +24,16 @@ class GameAction(Scene):
         red_x = margin
         green_x = SCREEN_WIDTH - margin - name_width - score_width - 15
 
+        # Draw game timer
+        self.draw_text(
+            f"{self.game.timer.to_string()}",
+            self.header_font,
+            YELLOW,
+            SCREEN_WIDTH // 2,
+            margin * 2,
+            center = True
+        )
+
         # Draw Red title
         red_center_x = red_x + (name_width + score_width + 5) // 2
         self.draw_text("RED", self.header_font, RED, red_center_x, margin * 2, center=True)

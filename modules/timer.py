@@ -21,6 +21,12 @@ class Timer:
                 self.active = False
                 self.completed = True
 
+    def to_string(self):
+        total_seconds = int(max(0, self.time))
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+        return f"{minutes:02d}:{seconds:02d}"
+
     def reset(self):
         self.active = False
         self.start_time = -1.0
