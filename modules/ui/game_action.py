@@ -65,6 +65,9 @@ class GameAction(Scene):
             elif p.team == 'Green':
                 green_players.append(p)
 
+        red_players.sort(key=lambda player: player.score, reverse=True)
+        green_players.sort(key=lambda player: player.score, reverse=True)
+
         # Draw 15 static slots for each team
         self.draw_player_slots(red_players, red_x, RED, name_width, score_width, player_start_y, line_height)
         self.draw_player_slots(green_players, green_x, LIGHT_GREEN, name_width, score_width, player_start_y, line_height, flip=True)
