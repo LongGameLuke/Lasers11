@@ -8,6 +8,7 @@ class Player:
         # game status info
         self.team:str = ""
         self.score:int = 0
+        self.base_tag:bool = False
 
     def __str__(self):
         return f"PID: {self.pid}\nName: {self.name}\nEquipment ID: {self.equipment_id}\n\nTeam: {self.team}\nScore: {self.score}"
