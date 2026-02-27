@@ -30,7 +30,6 @@ class PhotonServer:
         # Sets up server network and binds system ports
         self.udp_receive.settimeout(1)  # Program will hang if there is no timeout
         self.udp_receive.bind((self.host, self.receive_port))
-        #self.udp_broadcast.bind((self.host, self.broadcast_port))  # binding this breaks the traffic gen
         self.log_current_ports()
     
     def log_current_ports(self):
@@ -90,6 +89,21 @@ class PhotonServer:
         # Let PhotonGame handle game logic
         self.game.event_player_tag(tagger, tagged)
 
+    def event_base_tag(self, equipment_tagger:int, base_code:int):
+        tagger = None
+
+        # Find player profile assosiated with equipment ids
+        for player in self.game.players:
+            if player.equipment_id == equipment_tagger:
+                tagger = player
+            
+            # Exit for loop if profile is found
+            if tagger != None:
+                continue
+            
+        # Let PhotonGame handle game logic
+        self.game.event_base_tag(tagger, base_code)
+
     def broadcast_tagged(self, equipment_id:int):
         # Broadcast the tagged signal to equipment that needs to "shut down"
         # This is kinda a silly method to have
@@ -105,7 +119,12 @@ class PhotonServer:
 
             # Split received data
             hit_equipment = message.split(":")
-            self.event_player_tag(int(hit_equipment[0]), int(hit_equipment[1]))
+
+            # Determine if base or player tag
+            if hit_equipment[1] == RED_BASE_HIT or hit_equipment[1] == GREEN_BASE_HIT:
+                self.event_base_tag(int(hit_equipment[0]), int(hit_equipment[1]))
+            else:
+                self.event_player_tag(int(hit_equipment[0]), int(hit_equipment[1]))
         except:
             # do nothing when udp timeout
             pass

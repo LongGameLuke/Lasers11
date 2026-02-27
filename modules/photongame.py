@@ -138,3 +138,13 @@ class PhotonGame:
             self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
             self.server.broadcast_tagged(tagger.equipment_id)
+    
+    def event_base_tag(self, tagger:Player, base_code:int):
+        if tagger.team == "Red" and base_code == server.GREEN_BASE_HIT:
+            tagger.score += self.POINTS_BASE_TAG
+            log_game_event(f"{tagger.name} >>> Green Base")
+            self.game_events.append(f"{tagger.name} tagged Green Base")
+        elif tagger.team == "Green" and base_code == server.RED_BASE_HIT:
+            tagger.score += self.POINTS_BASE_TAG
+            log_game_event(f"{tagger.name} >>> Red Base")
+            self.game_events.append(f"{tagger.name} tagged Red Base")
