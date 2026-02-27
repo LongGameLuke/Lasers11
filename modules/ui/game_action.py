@@ -17,7 +17,7 @@ class GameAction(Scene):
 
         # Team headers — Red on the left quarter, Green on the right quarter
         self.draw_text(
-            f"RED TEAM  -  {self.game.red_team_score}", 
+            f"RED TEAM  -  {self.game.get_team_score('Red')}", 
             self.header_font, 
             RED,
             SCREEN_WIDTH//4,
@@ -26,7 +26,7 @@ class GameAction(Scene):
             )
 
         self.draw_text(
-            f"GREEN TEAM  -  {self.game.green_team_score}", 
+            f"GREEN TEAM  -  {self.game.get_team_score('Green')}", 
             self.header_font, 
             LIGHT_GREEN,
             3*SCREEN_WIDTH//4,

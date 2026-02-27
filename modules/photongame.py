@@ -23,8 +23,6 @@ class PhotonGame:
         self.game_in_progress:bool = False
         self.players = []
         self.game_events = []
-        self.red_team_score = 0
-        self.green_team_score = 0
 
         # Countdown vars
         self.COUNTDOWN_TIMER_LENGTH = (config["photon"]["game"]["start-countdown-length"] + 1) # This needs to be 1 second higher than the target timer length for format reasons
@@ -116,12 +114,6 @@ class PhotonGame:
         if tagger.team != tagged.team:
             tagger.score += self.POINTS_PLAYER_TAG
 
-            # Update team score. For friendly fire, both players lose points.
-            if tagger.team == 'Red':
-                self.red_team_score += self.POINTS_PLAYER_TAG
-            else:
-                self.green_team_score += self.POINTS_PLAYER_TAG
-
             log_game_event(f"{tagger.name} >>> {tagged.name}")
             self.game_events.append(f"{tagger.name} tagged {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
@@ -129,12 +121,14 @@ class PhotonGame:
             tagger.score -= self.POINTS_PLAYER_TAG
             tagged.score -= self.POINTS_PLAYER_TAG
 
-            if tagger.team == 'Red':
-                self.red_team_score -= self.POINTS_PLAYER_TAG
-            else:
-                self.green_team_score -= self.POINTS_PLAYER_TAG
-
             log_game_event(f"{tagger.name} >>> {tagged.name}")
             self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
             self.server.broadcast_tagged(tagger.equipment_id)
+
+    def get_team_score(self, team: str) -> int:
+        total_score = 0
+        for player in self.players:
+            if player.team == team:
+                total_score += player.score
+        return total_score
