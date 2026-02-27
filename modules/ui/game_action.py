@@ -1,7 +1,7 @@
 import pygame
 from modules.ui.scene import Scene
 from modules.ui.constants import (
-    SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, RED, LIGHT_GREEN, FONT_SIZE, HEADER_SIZE,
+    SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, RED, LIGHT_GREEN, FONT_SIZE, HEADER_SIZE, WHITE
 )
 
 
@@ -54,11 +54,25 @@ class GameAction(Scene):
                 green_y += line_spacing
 
         # Draw the game events box at the bottom center of the screen
-        box_width = SCREEN_WIDTH // 2
+        box_width = SCREEN_WIDTH // 3
         box_x = (SCREEN_WIDTH - box_width) // 2
-        box_y = (SCREEN_HEIGHT - 200)
-        box_height = (SCREEN_HEIGHT - 100)
+        box_y = (SCREEN_HEIGHT // 2)
+        box_height = (SCREEN_HEIGHT // 2)
         pygame.draw.rect(self.screen, (255, 255, 255), (box_x, box_y, box_width, box_height), 3)
+
+        # Display 5 most recent events
+        events = self.game.game_events[-5:]
+        for i in range(len(events)):
+            e = events[i]
+            y = box_y + 100 + (i * 30)
+            self.draw_text(
+                str(e),
+                self.status_font,
+                WHITE, 
+                SCREEN_WIDTH // 2, 
+                y, 
+                center=True
+                )
 
     def handle_events(self, events):
         for event in events:

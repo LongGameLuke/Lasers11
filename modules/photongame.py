@@ -20,6 +20,7 @@ class PhotonGame:
         self.start_game_flag = False
         self.game_in_progress:bool = False
         self.players = []
+        self.game_events = []
 
         # Countdown vars
         self.countdown_active:bool = False
@@ -110,4 +111,12 @@ class PhotonGame:
         if tagger.team != tagged.team:
             tagger.score += self.POINTS_PLAYER_TAG
             log_game_event(f"{tagger.name} >>> {tagged.name}")
+            self.game_events.append(f"{tagger.name} tagged {tagged.name}!")
             self.server.broadcast_tagged(tagged.equipment_id)
+        else:
+            tagger.score -= self.POINTS_PLAYER_TAG
+            tagged.score -= self.POINTS_PLAYER_TAG
+            log_game_event(f"{tagger.name} >>> {tagged.name}")
+            self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}!")
+            self.server.broadcast_tagged(tagged.equipment_id)
+            self.server.broadcast_tagged(tagger.equipment_id)
