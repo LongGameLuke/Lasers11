@@ -13,7 +13,7 @@ from modules.ui.constants import (
 class NetworkConfig(Scene):
     def enter(self):
         self.font = pygame.font.SysFont(None, FONT_SIZE)
-        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 50)
 
         # Pull the current network settings from the server so the fields
         # show what's actually configured right now
@@ -74,7 +74,7 @@ class NetworkConfig(Scene):
 
         # Title at the top
         self.draw_text("NETWORK CONFIGURATION", self.header_font, YELLOW,
-                        SCREEN_WIDTH//2, 100, center=True)
+                        SCREEN_WIDTH//2, 50, center=True)
 
         # The 3 editable fields with their labels and current values
         fields = [
@@ -90,7 +90,7 @@ class NetworkConfig(Scene):
             self.draw_text(label, self.font, WHITE, SCREEN_WIDTH//2 - 200, y)
 
             # Draw the input box — yellow border if selected, gray otherwise
-            rect = pygame.Rect(SCREEN_WIDTH//2, y - 5, 300, 30)
+            rect = pygame.Rect(SCREEN_WIDTH//2, y - 5, 250, 30)
             if i == self.current_field:
                 pygame.draw.rect(self.screen, YELLOW, rect, 2)
             else:
@@ -106,7 +106,7 @@ class NetworkConfig(Scene):
 
         # Controls hint at the bottom
         self.draw_text("Arrows: Move | Enter: Save | F7/ESC: Back",
-                        self.font, GRAY, SCREEN_WIDTH//2, SCREEN_HEIGHT - 50, center=True)
+                        self.font, YELLOW, SCREEN_WIDTH//2, SCREEN_HEIGHT - 65, center=True)
 
     def draw_text(self, text, font, color, x, y, center=False):
         """Helper to render text to the screen."""

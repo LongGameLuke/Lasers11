@@ -5,7 +5,7 @@ import pygame
 from modules.ui.scene import Scene
 from modules.ui.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, WHITE, RED, GREEN,
-    YELLOW, GRAY, FONT_SIZE, HEADER_SIZE, GRID_START_Y, ROW_HEIGHT,
+    YELLOW, LIGHT_GREEN, GRAY, FONT_SIZE, HEADER_SIZE, GRID_START_Y, ROW_HEIGHT,
     COL_WIDTH, MAX_TEAM_ROWS,
 )
 
@@ -15,7 +15,7 @@ class PlayerEntry(Scene):
         # Set up our fonts
         self.font = pygame.font.SysFont(None, FONT_SIZE)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
-        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
+        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 50)
 
         # Only initialize the grid data the first time we enter this scene.
         # If the player goes to network config and comes back, we want to keep their entries.
@@ -212,9 +212,9 @@ class PlayerEntry(Scene):
         self.screen.fill(BACKGROUND)
 
         # Draw team headers at the top
-        self.draw_text("RED TEAM", self.header_font, RED,
+        self.draw_text("RED", self.header_font, RED,
                         SCREEN_WIDTH//4, 50, center=True)
-        self.draw_text("GREEN TEAM", self.header_font, GREEN,
+        self.draw_text("GREEN", self.header_font, LIGHT_GREEN,
                         3*SCREEN_WIDTH//4, 50, center=True)
 
         # Draw column headers for both grids
