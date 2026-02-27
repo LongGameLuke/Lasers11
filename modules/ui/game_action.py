@@ -102,6 +102,7 @@ class GameAction(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F5 or event.key == pygame.K_ESCAPE:
+                    self.game.end_game()
                     self.manager.switch("PLAYER_ENTRY")
 
     def draw_text(self, text, font, color, x, y, center=False):
