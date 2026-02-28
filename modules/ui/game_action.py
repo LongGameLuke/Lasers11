@@ -26,7 +26,7 @@ class GameAction(Scene):
 
         # Draw game timer
         self.draw_text(
-            f"{self.game.timer.to_string()}",
+            f"{self.game.timer}",
             self.header_font,
             YELLOW,
             SCREEN_WIDTH // 2,

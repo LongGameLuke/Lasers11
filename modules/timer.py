@@ -2,16 +2,21 @@ from time import time
 
 class Timer:
     def __init__(self, length):
-        self.length = float(length)
+        self.length:float = float(length)
         self.active:bool = False
         self.start_time:float = -1.0
         self.time:float = -1.0
         self.completed:bool = False
+    
+    def __str__(self):
+        total_seconds = int(max(0, self.time))
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+        return f"{minutes:02d}:{seconds:02d}"
 
     def start(self):
         self.active = True
         self.start_time = time()
-        print(f"Timer start: {self.length} seconds")
 
     def update(self):
         if self.active:
@@ -20,12 +25,6 @@ class Timer:
             if self.time <= 0.0:
                 self.active = False
                 self.completed = True
-
-    def to_string(self):
-        total_seconds = int(max(0, self.time))
-        minutes = total_seconds // 60
-        seconds = total_seconds % 60
-        return f"{minutes:02d}:{seconds:02d}"
 
     def reset(self):
         self.active = False
