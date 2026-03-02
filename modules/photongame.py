@@ -63,10 +63,8 @@ class PhotonGame:
         self.start_game_flag = False
         log_game_event("Game starting...")
 
-        # Reset all players scores
-        for player in self.players:
-            player.score = 0
-            player.base_tag = False
+        # Reset players to default state
+        self.reset_game()
 
         # setup countdown timer
         self.timer.start()
@@ -76,6 +74,12 @@ class PhotonGame:
         # Ends the in progress game
         self.game_in_progress = False
         self.server.end_game()
+    
+    def reset_game(self):
+        # Sets all players scores to zero and clears events
+        for player in self.players:
+            player.reset_score()
+        self.game_events = []
 
     def clear_players(self):
         # Clears players from game
