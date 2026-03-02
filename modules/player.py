@@ -12,3 +12,7 @@ class Player:
 
     def __str__(self):
         return f"PID: {self.pid}\nName: {self.name}\nEquipment ID: {self.equipment_id}\n\nTeam: {self.team}\nScore: {self.score}"
+
+    def reset_score(self):
+        self.score = 0
+        self.base_tag = False
