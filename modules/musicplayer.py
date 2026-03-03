@@ -23,12 +23,7 @@ class MusicPlayer:
         if self.loaded_track == None:
             print("No song to play. No song loaded.")
             return
-        elif self.is_playing():
-            print("Song is already playing.")
-            return
 
-        print(f"playing audio: {self.loaded_track}")
-        
         pygame.mixer.music.play()
 
     def stop(self):
