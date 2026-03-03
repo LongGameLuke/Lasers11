@@ -26,7 +26,6 @@ class PhotonGame:
         self.players = []
         self.game_events = []
         self.timer = Timer(self.COUNTDOWN_LENGTH) # Used for countdown and game time
-
         self.music = MusicPlayer(config["photon"]["game"]["music"]["tracks"])
     
     def update(self) -> bool:
@@ -141,11 +140,12 @@ class PhotonGame:
             self.server.broadcast_tagged(tagger.equipment_id)
 
     def get_team_score(self, team: str) -> int:
-        total_score = 0
+        # Returns current team score
+        team_score = 0
         for player in self.players:
             if player.team == team:
-                total_score += player.score
-        return total_score
+                team_score += player.score
+        return team_score
     
     def event_base_tag(self, tagger:Player, base_code:int):
         # Handles base tag event
