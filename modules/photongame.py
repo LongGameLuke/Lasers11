@@ -4,10 +4,8 @@ from modules.ui import PhotonUI
 from modules.player import Player
 from modules.consolelog import log_game_event, log_game_tag_event
 from modules.timer import Timer
-import time
-from math import ceil
-
 from modules.musicplayer import MusicPlayer
+import time
 
 class PhotonGame:
     # This class runs the actual game after initialization
