@@ -1,5 +1,6 @@
 import pygame
 import random
+from modules.consolelog import log_process
 
 class MusicPlayer:
     def __init__(self, track_list:list):
@@ -21,7 +22,7 @@ class MusicPlayer:
         # Checks to make sure audio is not playing
         # and audio is loaded
         if self.loaded_track == None:
-            print("No song to play. No song loaded.")
+            log_process("MusicPlayer: No song to play. No song loaded.")
             return
 
         pygame.mixer.music.play()
@@ -29,9 +30,9 @@ class MusicPlayer:
     def stop(self):
         # Stops currently playing audio
         if self.is_playing() == False:
-            print("No music is currently playing")
+            log_process("MusicPlayer: No music is currently playing")
             return
-        
+
         pygame.mixer.music.stop()
 
     def is_playing(self)->bool:
