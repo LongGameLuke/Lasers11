@@ -7,6 +7,8 @@ from modules.timer import Timer
 import time
 from math import ceil
 
+from modules.musicplayer import MusicPlayer
+
 class PhotonGame:
     # This class runs the actual game after initialization
     def __init__(self, db:PhotonDB, config:dict, server_host:str, server_ports):
@@ -26,6 +28,8 @@ class PhotonGame:
         self.players = []
         self.game_events = []
         self.timer = Timer(self.COUNTDOWN_LENGTH) # Used for countdown and game time
+
+        self.music = MusicPlayer(config["photon"]["game"]["music"]["tracks"])
     
     def update(self) -> bool:
         # Game update that runs each loop
@@ -70,6 +74,10 @@ class PhotonGame:
         self.timer.start()
         log_game_event(f"Game beginning in {self.COUNTDOWN_LENGTH} seconds...")
 
+        # Start music track
+        self.music.load_track_random()
+        self.music.play()
+
     def end_game(self):
         # Ends the in progress game
         self.game_in_progress = False
@@ -80,6 +88,8 @@ class PhotonGame:
         for player in self.players:
             player.reset_score()
         self.game_events = []
+        self.timer.reset()
+        self.timer.length = float(self.COUNTDOWN_LENGTH)
 
     def clear_players(self):
         # Clears players from game
