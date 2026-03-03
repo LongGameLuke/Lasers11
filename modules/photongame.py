@@ -78,10 +78,13 @@ class PhotonGame:
         self.music.load_track_random()
         self.music.play()
 
-    def end_game(self):
+    def end_game(self, kill_music=False):
         # Ends the in progress game
         self.game_in_progress = False
         self.server.end_game()
+        
+        if kill_music:
+            self.music.stop()
     
     def reset_game(self):
         # Sets all players scores to zero and clears events
