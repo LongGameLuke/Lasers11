@@ -4,20 +4,20 @@ photon:
     broadcast-port: 7500
     receive-port: 7501
   game:
-    start-countdown-length: 30
+    start-countdown-length: 18
     game-length: 360
     points-player-tag: 10
     points-base-tag: 100
     music:
       volume: 1.0
       tracks:
-        - "assets/music/Track01.mp3"
-        - "assets/music/Track02.mp3"
-        - "assets/music/Track03.mp3"
-        - "assets/music/Track04.mp3"
-        - "assets/music/Track05.mp3"
-        - "assets/music/Track06.mp3"
-        - "assets/music/Track07.mp3"
-        - "assets/music/Track08.mp3"
+        - "assets/audio/music/Track01.mp3"
+        - "assets/audio/music/Track02.mp3"
+        - "assets/audio/music/Track03.mp3"
+        - "assets/audio/music/Track04.mp3"
+        - "assets/audio/music/Track05.mp3"
+        - "assets/audio/music/Track06.mp3"
+        - "assets/audio/music/Track07.mp3"
+        - "assets/audio/music/Track08.mp3"
 database:
   db-name: photon
