@@ -8,5 +8,16 @@ photon:
     game-length: 360
     points-player-tag: 10
     points-base-tag: 100
+    music:
+      volume: 1.0
+      tracks:
+        - "assets/music/Track01.mp3"
+        - "assets/music/Track02.mp3"
+        - "assets/music/Track03.mp3"
+        - "assets/music/Track04.mp3"
+        - "assets/music/Track05.mp3"
+        - "assets/music/Track06.mp3"
+        - "assets/music/Track07.mp3"
+        - "assets/music/Track08.mp3"
 database:
   db-name: photon
