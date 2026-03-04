@@ -8,8 +8,10 @@ from modules.ui.constants import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, HEADER
 
 class SplashScreen(Scene):
     def enter(self):
+        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+
         self.start_time = time.time()
-        self.font = pygame.font.SysFont("Arial", HEADER_SIZE)
+        self.font = pygame.font.SysFont(None, HEADER_SIZE)
 
         # Loads and scales logo image
         self.image = None

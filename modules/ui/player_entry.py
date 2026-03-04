@@ -13,9 +13,11 @@ from modules.ui.constants import (
 class PlayerEntry(Scene):
     def enter(self):
         # Set up our fonts
-        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+        
+        self.font = pygame.font.SysFont(font_cfg["default"], FONT_SIZE)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
-        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 50)
+        self.header_font = pygame.font.Font(font_cfg["header"], HEADER_SIZE)
 
         # Only initialize the grid data the first time we enter this scene.
         # If the player goes to network config and comes back, we want to keep their entries.

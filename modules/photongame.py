@@ -11,6 +11,7 @@ class PhotonGame:
     # This class runs the actual game after initialization
     def __init__(self, db:PhotonDB, config:dict, server_host:str, server_ports):
         self.db = db
+        self.config = config
         self.server = PhotonServer(server_host, server_ports, self)
         self.ui = PhotonUI(self)
 

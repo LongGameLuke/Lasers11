@@ -19,5 +19,9 @@ photon:
         - "assets/audio/music/Track06.mp3"
         - "assets/audio/music/Track07.mp3"
         - "assets/audio/music/Track08.mp3"
+  ui:
+    fonts:
+      header: "assets/fonts/Orbitron/static/Orbitron-Bold.ttf"
+      default: null
 database:
   db-name: photon

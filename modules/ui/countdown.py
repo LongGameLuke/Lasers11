@@ -10,8 +10,11 @@ from modules.ui.constants import (
 
 class StartGame_Countdown(Scene):
     def enter(self):
-        self.font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE)
-        self.countdown_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", HEADER_SIZE + 40)
+        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+
+        self.header_font = pygame.font.Font(font_cfg["header"], HEADER_SIZE)
+        self.font = pygame.font.Font(font_cfg["default"], HEADER_SIZE)
+        self.countdown_font = pygame.font.Font(font_cfg["default"], HEADER_SIZE + 40)
 
     def update(self):
         if not self.game.timer.active and not self.game.start_game_flag:

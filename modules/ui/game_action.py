@@ -6,12 +6,14 @@ from modules.ui.constants import (
 
 class GameAction(Scene):
     def enter(self):
+        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+
         self.font = pygame.font.SysFont(None, 32)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
-        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 70)
+        self.header_font = pygame.font.Font(font_cfg["header"], 70)
         self.label_font = pygame.font.SysFont(None, 24)
         self.player_font = pygame.font.SysFont(None, 28)
-        self.score_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 45)
+        self.score_font = pygame.font.Font(font_cfg["default"], 45)
 
     def render(self):
         self.screen.fill(BACKGROUND)

@@ -12,8 +12,10 @@ from modules.ui.constants import (
 
 class NetworkConfig(Scene):
     def enter(self):
-        self.font = pygame.font.SysFont(None, FONT_SIZE)
-        self.header_font = pygame.font.Font("assets/fonts/Orbitron/static/Orbitron-Bold.ttf", 50)
+        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+
+        self.font = pygame.font.SysFont(font_cfg["default"], FONT_SIZE)
+        self.header_font = pygame.font.Font(font_cfg["header"], 50)
 
         # Pull the current network settings from the server so the fields
         # show what's actually configured right now
