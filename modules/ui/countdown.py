@@ -24,7 +24,7 @@ class StartGame_Countdown(Scene):
         self.screen.fill(BACKGROUND)
         self.draw_text(
             f"GAME IS STARTING IN:",
-            self.font,
+            self.header_font,
             WHITE,
             SCREEN_WIDTH//2,
             SCREEN_HEIGHT//3,
