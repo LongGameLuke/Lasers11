@@ -12,7 +12,7 @@ from modules.ui.constants import (
 
 class NetworkConfig(Scene):
     def enter(self):
-        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+        font_cfg = self.game.config["photon"]["game"]["ui"]["fonts"]
 
         self.font = pygame.font.SysFont(font_cfg["default"], FONT_SIZE)
         self.header_font = pygame.font.Font(font_cfg["header"], 50)

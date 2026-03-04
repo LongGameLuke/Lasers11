@@ -8,7 +8,7 @@ from modules.ui.constants import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, HEADER
 
 class SplashScreen(Scene):
     def enter(self):
-        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+        font_cfg = self.game.config["photon"]["game"]["ui"]["fonts"]
 
         self.start_time = time.time()
         self.font = pygame.font.SysFont(None, HEADER_SIZE)

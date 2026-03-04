@@ -6,7 +6,7 @@ from modules.ui.constants import (
 
 class GameAction(Scene):
     def enter(self):
-        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+        font_cfg = self.game.config["photon"]["game"]["ui"]["fonts"]
 
         self.font = pygame.font.SysFont(None, 32)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)

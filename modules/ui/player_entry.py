@@ -13,7 +13,7 @@ from modules.ui.constants import (
 class PlayerEntry(Scene):
     def enter(self):
         # Set up our fonts
-        font_cfg = self.game.config["photon"]["ui"]["fonts"]
+        font_cfg = self.game.config["photon"]["game"]["ui"]["fonts"]
         
         self.font = pygame.font.SysFont(font_cfg["default"], FONT_SIZE)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
