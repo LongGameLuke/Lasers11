@@ -148,6 +148,12 @@ class PhotonGame:
                 team_score += player.score
         return team_score
     
+    def is_team_winning(self, team: str) -> bool:
+        if team == 'Red':
+            return self.get_team_score('Red') > self.get_team_score('Green')
+        else:
+            return self.get_team_score('Green') > self.get_team_score('Red')
+
     def event_base_tag(self, tagger:Player, base_code:int):
         # Handles base tag event
         if tagger.team == "Red" and base_code == int(SERVER_CODES.GREEN_BASE_HIT.value):
