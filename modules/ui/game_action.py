@@ -15,6 +15,10 @@ class GameAction(Scene):
         self.player_font = pygame.font.SysFont(None, 28)
         self.score_font = pygame.font.Font(font_cfg["default"], 45)
 
+        self.base_icon = pygame.transform.scale(
+            pygame.image.load("assets/images/baseicon.jpg"), (25, 25)
+        )
+
     def render(self):
         self.screen.fill(BACKGROUND)
 
@@ -112,6 +116,9 @@ class GameAction(Scene):
                     t1, t2 = p.name, str(p.score)
                 self.draw_text(t1, self.player_font, color, x + w1 // 2, y + 17, center=True)
                 self.draw_text(t2, self.player_font, color, x2 + w2 // 2, y + 17, center=True)
+                if p.base_tag:
+                    name_x = x2 if flip else x
+                    self.screen.blit(self.base_icon, (name_x + 4, y + 5))
 
     def handle_events(self, events):
         for event in events:
