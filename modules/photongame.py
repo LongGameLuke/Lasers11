@@ -149,6 +149,7 @@ class PhotonGame:
         return team_score
     
     def is_team_winning(self, team: str) -> bool:
+        # Returns true if specified team is winning game
         if team == 'Red':
             return self.get_team_score('Red') > self.get_team_score('Green')
         else:

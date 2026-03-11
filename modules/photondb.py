@@ -1,5 +1,5 @@
 import psycopg2
-from typing import Union
+# from typing import Union
 from modules.consolelog import *
 
 class PhotonDB:
