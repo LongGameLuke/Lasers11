@@ -20,6 +20,7 @@ class PhotonGame:
         self.POINTS_BASE_TAG = config["photon"]["game"]["points-base-tag"]
         self.COUNTDOWN_LENGTH = config["photon"]["game"]["start-countdown-length"]
         self.GAME_LENGTH = config["photon"]["game"]["game-length"]
+        self.MUSIC_CUE_TIME:float = 17.5
 
         # Game status vars
         self.start_game_flag = False
@@ -31,6 +32,12 @@ class PhotonGame:
     
     def update(self) -> bool:
         # Game update that runs each loop
+
+        # Start music at cue time
+        if self.timer.completed == False and self.timer.active == True and self.timer.time <= self.MUSIC_CUE_TIME and self.timer.time >= 0.0 and self.music.is_playing() == False: # the unholy if statement
+            self.music.load_track_random()
+            self.music.play()
+
         # Update timer
         if self.timer.completed == True and self.game_in_progress == False:
             # Start game timer
@@ -71,10 +78,6 @@ class PhotonGame:
         # setup countdown timer
         self.timer.start()
         log_game_event(f"Game beginning in {self.COUNTDOWN_LENGTH} seconds...")
-
-        # Start music track
-        self.music.load_track_random()
-        self.music.play()
 
     def end_game(self, kill_music=False):
         # Ends the in progress game
