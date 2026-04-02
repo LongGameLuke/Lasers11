@@ -28,7 +28,7 @@ class PhotonServer:
 
     def start_sockets(self):
         # Sets up server network and binds system ports
-        self.udp_receive.settimeout(1)  # Program will hang if there is no timeout
+        self.udp_receive.settimeout(0.01)  # Program will hang if there is no timeout
         self.udp_receive.bind((self.host, self.receive_port))
         self.log_current_ports()
     
