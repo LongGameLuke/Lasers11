@@ -56,11 +56,25 @@ class GameAction(Scene):
         red_score_x = SCREEN_WIDTH // 2 - score_width_pane - score_gap // 2
         green_score_x = SCREEN_WIDTH // 2 + score_gap // 2
 
+        red_score = self.game.get_team_score('Red')
+        green_score = self.game.get_team_score('Green')
+        flash_on = (pygame.time.get_ticks() // 500) % 2 == 0
+
+        if (flash_on and red_score > green_score):
+            red_color = WHITE
+        else:
+            red_color = RED
+
+        if (flash_on and green_score > red_score):
+            green_color = WHITE
+        else:
+            green_color = LIGHT_GREEN
+
         # Red score pane
-        self.draw_score_pane(red_score_x, score_y, score_width_pane, score_height, RED, "RED SCORE", self.game.get_team_score('Red'))
+        self.draw_score_pane(red_score_x, score_y, score_width_pane, score_height, red_color, "RED SCORE", red_score)
 
         # Green score pane
-        self.draw_score_pane(green_score_x, score_y, score_width_pane, score_height, LIGHT_GREEN, "GREEN SCORE", self.game.get_team_score('Green'))
+        self.draw_score_pane(green_score_x, score_y, score_width_pane, score_height, green_color, "GREEN SCORE", green_score)
 
         # Separate players by team
         red_players = []
@@ -93,7 +107,7 @@ class GameAction(Scene):
 
     def draw_score_pane(self, x, y, w, h, color, label, score):
         pygame.draw.rect(self.screen, color, (x, y, w, h), 3)
-        self.draw_text(label, self.label_font, WHITE, x + w // 2, y + 20, center=True)
+        self.draw_text(label, self.label_font, color, x + w // 2, y + 20, center=True)
         self.draw_text(str(score), self.score_font, color, x + w // 2, y + 60, center=True)
 
     def draw_player_slots(self, players, x, color, name_width, score_width, start_y, line_height, flip=False):
