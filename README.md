@@ -1,4 +1,5 @@
 # Team 11 - Photon Laser Tag
+This is a project for the University of Arkansas to recreate the original commercial version of laser tag's ([Photon: The Ultimate Game on Planet Earth](https://en.wikipedia.org/wiki/Photon:_The_Ultimate_Game_on_Planet_Earth)) game control server.
 
 ## How to run
 Running this program requires the pre-configured Virtual Box VM located [here](http://turing.csce.uark.edu/~jps011). All following steps should be performed within the running virtual machine.
