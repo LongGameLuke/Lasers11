@@ -25,3 +25,4 @@ photon:
         default: null
 database:
   db-name: photon
+  user: student

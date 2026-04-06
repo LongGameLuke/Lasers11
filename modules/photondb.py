@@ -3,9 +3,9 @@ import psycopg2
 from modules.consolelog import *
 
 class PhotonDB:
-    def __init__(self, dbname:str="photon"):
+    def __init__(self, dbname:str="photon", user:str="student"):
         self.dbname = dbname
-        self.user = "student"
+        self.user = user
         self.conn = None
         self.cur = None
     
