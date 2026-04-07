@@ -1,6 +1,3 @@
-# Main UI controller — initializes pygame, registers all scenes, and drives
-# the per-frame event/update/render loop via the scene manager.
-
 import pygame
 from modules.ui.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from modules.ui.scene import SceneManager
@@ -9,7 +6,6 @@ from modules.ui.player_entry import PlayerEntry
 from modules.ui.countdown import StartGame_Countdown
 from modules.ui.game_action import GameAction
 from modules.ui.network_config import NetworkConfig
-
 
 class PhotonUI:
     def __init__(self, game):
@@ -33,13 +29,9 @@ class PhotonUI:
         self.scene_manager.switch("SPLASH")
 
     def kill_pygame(self):
-        """Clean up pygame when the game is shutting down."""
         pygame.quit()
 
     def update(self)->bool:
-        """Called once per frame by PhotonGame.
-        Handles window events, delegates to the current scene, and flips the display.
-        Returns False if the user closed the window, True otherwise."""
 
         # Grab all pygame events this frame
         events = pygame.event.get()

@@ -1,6 +1,3 @@
-# Countdown scene — displays a countdown timer before the game begins.
-# Transitions to GameAction once the countdown finishes.
-
 import pygame
 from modules.ui.scene import Scene
 from modules.ui.constants import (

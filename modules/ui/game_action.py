@@ -142,7 +142,6 @@ class GameAction(Scene):
                     self.manager.switch("PLAYER_ENTRY")
 
     def draw_text(self, text, font, color, x, y, center=False):
-        """Helper to render text to the screen."""
         surf = font.render(str(text), True, color)
         rect = surf.get_rect()
         if center:
