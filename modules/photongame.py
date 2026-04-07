@@ -135,6 +135,7 @@ class PhotonGame:
             self.game_events.append(f"{tagger.name} tagged {tagged.name}")
             self.server.broadcast_tagged(tagged.equipment_id)
         else:
+            # friendly fire event
             tagger.score -= self.POINTS_PLAYER_TAG
             tagged.score -= self.POINTS_PLAYER_TAG
 
