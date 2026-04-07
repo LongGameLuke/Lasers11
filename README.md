@@ -60,9 +60,9 @@ Tag events are sent from clients to the game server and follow the following for
 ```
 After the game server registers the tag event, the tagged player's hardware id will be broadcast back. This is used by the player client to know their unit should become shortly disabled.
 
-### Base Hit Event
-When a team's base is hit, the player client will send the base hit code to the game server. The game server will send back the id of the base hit. The client will remember this event and can only occur once per game.
+### Base Tag Event
+When a team's base is tagged, the player client will send the base tag code to the game server in the same format as a regular tag event. The game server will send back the id of the base that was tagged. The player client will remember this event and can only occur once per player per game.
 ```
-43 = Green base hit by red player
-53 = Red base hit by green player
+43 = Green base tagged by red player
+53 = Red base tagged by green player
 ```
