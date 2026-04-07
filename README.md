@@ -20,7 +20,7 @@ cd Lasers11/
 ### 2. Install Dependencies
 ```bash
 # Install the required dependencies
-sudo ./install.sh
+./install.sh
 # This script will launch the Photon Laser Tag program after installing
 ```
 
@@ -34,7 +34,7 @@ python3 run.py
 In the event the auto install and run script doesn't work, you can perform the steps below manually.
 ```bash
 # Make sure pip is installed
-sudo apt update && sudo apt install pip
+sudo apt update && sudo apt install pip -y
 
 # Install dependencies from requirements.txt
 pip install -r requirements.txt
