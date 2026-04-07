@@ -1,6 +1,3 @@
-# Player entry scene — dual-team grid for entering player IDs, names, and equipment IDs.
-# Supports keyboard navigation, mouse cell selection, and DB lookups for returning players.
-
 import pygame
 from modules.ui.scene import Scene
 from modules.ui.constants import (
@@ -12,18 +9,13 @@ from modules.ui.constants import (
 
 class PlayerEntry(Scene):
     def enter(self):
-        # Set up our fonts
         font_cfg = self.game.config["photon"]["game"]["ui"]["fonts"]
         
         self.font = pygame.font.SysFont(font_cfg["default"], FONT_SIZE)
         self.status_font = pygame.font.SysFont(None, HEADER_SIZE)
         self.header_font = pygame.font.Font(font_cfg["header"], HEADER_SIZE)
 
-        # Only initialize the grid data the first time we enter this scene.
-        # If the player goes to network config and comes back, we want to keep their entries.
         if not hasattr(self, "red_entries"):
-            # Each entry is [player_id, codename, equipment_id] as strings
-            # Start with one empty row per team
             self.red_entries = [["", "", ""]]
             self.green_entries = [["", "", ""]]
 
@@ -87,21 +79,14 @@ class PlayerEntry(Scene):
                         entries[self.current_row][self.current_col] += event.unicode
 
     def get_entries(self, team: str):
-        """Return the entry list for the given team."""
         return self.red_entries if team == "Red" else self.green_entries
 
     def ensure_nex_row(self, team: str, row_completed_idx: int) -> None:
-        """After a player is added, append a new empty row to the team's grid
-        so the next player can be entered (up to MAX_TEAM_ROWS)."""
         entries = self.get_entries(team)
         if row_completed_idx == len(entries) - 1 and len(entries) < MAX_TEAM_ROWS:
             entries.append(["", "", ""])
 
     def hit_cell(self, mx: int, my: int):
-        """Check if a mouse click landed on a grid cell.
-        Returns (team, row, col) if a cell was hit, or None otherwise.
-        We check both the Red pane (left side, starting at x=110) and
-        the Green pane (right side, starting at x=750)."""
         panes = [("Red", 110, self.red_entries),("Green", 750, self.green_entries),]
 
         for team, base_x, entries in panes:
@@ -131,11 +116,6 @@ class PlayerEntry(Scene):
         return None
 
     def process_input(self):
-        """Handle Enter key press on the currently selected cell.
-        Behavior depends on which column we're in:
-          Col 0 (Player ID): Look up the player in the DB, auto-fill name if found
-          Col 1 (Code Name): Just move focus to the equipment ID column
-          Col 2 (Equipment ID): Validate everything and add the player to the game"""
         team = self.current_team
         entries = self.get_entries(team)
 
@@ -203,7 +183,6 @@ class PlayerEntry(Scene):
                 self.status_color = RED
 
     def clear_entries(self):
-        """Reset both team grids back to a single empty row each."""
         self.red_entries = [["", "", ""]]
         self.green_entries = [["", "", ""]]
         self.current_team = "Red"
@@ -288,8 +267,6 @@ class PlayerEntry(Scene):
             )
 
     def draw_text(self, text, font, color, x, y, center=False):
-        """Helper to render text to the screen. If center=True, the text is
-        centered on (x, y) instead of using it as the top-left corner."""
         surf = font.render(str(text), True, color)
         rect = surf.get_rect()
         if center:

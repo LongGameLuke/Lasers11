@@ -1,14 +1,9 @@
-# Network configuration scene — allows editing the server host, broadcast port, and receive port.
-# Changes are applied live to the game server when the user presses Enter.
-
-
 import pygame
 from modules.ui.scene import Scene
 from modules.ui.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND, WHITE, RED, GREEN,
     YELLOW, GRAY, FONT_SIZE, HEADER_SIZE,
 )
-
 
 class NetworkConfig(Scene):
     def enter(self):
@@ -57,8 +52,6 @@ class NetworkConfig(Scene):
                         elif self.current_field == 2: self.receive_port += event.unicode
 
     def save_changes(self):
-        """Push the edited values to the game server. Ports get converted to ints here,
-        so if the user typed something that's not a number it'll get caught."""
         try:
             self.game.server.set_network(
                 host=self.host.strip(),
@@ -111,7 +104,6 @@ class NetworkConfig(Scene):
                         self.font, YELLOW, SCREEN_WIDTH//2, SCREEN_HEIGHT - 65, center=True)
 
     def draw_text(self, text, font, color, x, y, center=False):
-        """Helper to render text to the screen."""
         surf = font.render(str(text), True, color)
         rect = surf.get_rect()
         if center:
