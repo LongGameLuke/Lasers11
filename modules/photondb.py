@@ -2,9 +2,8 @@ import psycopg2
 from modules.consolelog import *
 
 class PhotonDB:
-    def __init__(self, dbname:str="photon", user:str="student"):
+    def __init__(self, dbname:str="photon"):
         self.dbname = dbname
-        self.user = user
         self.conn = None
         self.cur = None
     
@@ -12,8 +11,7 @@ class PhotonDB:
         try:
             # Connect to database and create cursor
             self.conn = psycopg2.connect(
-                dbname=self.dbname,
-                user=self.user      # won't connect on some systems if this isn't set
+                dbname=self.dbname
             )
             self.cur = self.conn.cursor()
             return True
