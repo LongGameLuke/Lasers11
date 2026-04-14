@@ -100,10 +100,15 @@ class GameAction(Scene):
         pygame.draw.rect(self.screen, WHITE, (events_x, events_y, events_width, events_height), 3)
         self.draw_text("GAME EVENTS", self.label_font, WHITE, events_x + events_width // 2, events_y + 15, center=True)
 
-        # Display 5 most recent events
-        for i, e in enumerate(self.game.game_events[-10:]):
+        # Display 10 most recent events
+        recent_events = self.game.game_events[-10:]
+        for i, e in enumerate(recent_events):
             y = events_y + (margin * 2) + (i * 30)
-            self.draw_text(str(e), self.status_font, YELLOW, events_x + events_width // 2, y, center=True)
+            if i == len(recent_events) - 1:
+                text = f"> {e}"
+            else:
+                text = str(e)
+            self.draw_text(text, self.status_font, YELLOW, events_x + events_width // 2, y, center=True)
 
     def draw_score_pane(self, x, y, w, h, color, label, score):
         pygame.draw.rect(self.screen, color, (x, y, w, h), 3)
