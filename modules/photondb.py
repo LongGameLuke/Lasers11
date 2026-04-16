@@ -21,12 +21,15 @@ class PhotonDB:
     def disconnect_from_db(self) -> bool:
         # Disconnect from database
         try:
-            self.conn.close()
-            self.cur.close()
+            if self.cur is not None:
+                self.cur.close()
+                self.cur = None
+            if self.conn is not None:
+                self.conn.close()
+                self.conn = None
             return True
         except Exception as e:
             raise e
-            return False
 
     def get_all_players(self) -> dict:
         # Returns all players currently in the database
