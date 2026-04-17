@@ -34,7 +34,7 @@ class PhotonGame:
         # Game update that runs each loop
 
         # Start music at cue time
-        if self.timer.completed == False and self.timer.active == True and self.timer.time <= self.MUSIC_CUE_TIME and self.timer.time >= 0.0 and self.music.is_playing() == False: # the unholy if statement
+        if self.timer.completed == False and self.timer.active == True and self.timer.time <= self.MUSIC_CUE_TIME and self.timer.time >= 0.0 and self.music.is_playing == False: # the unholy if statement
             self.music.load_track_random()
             self.music.play()
 

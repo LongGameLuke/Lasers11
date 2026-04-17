@@ -42,7 +42,7 @@ class MusicPlayer:
 
     def stop(self):
         # Stops currently playing audio
-        if self.is_playing() == False:
+        if self.is_playing == False:
             log_process("MusicPlayer: No music is currently playing")
             return
 
