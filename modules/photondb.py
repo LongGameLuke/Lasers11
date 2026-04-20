@@ -21,12 +21,11 @@ class PhotonDB:
     def disconnect_from_db(self) -> bool:
         # Disconnect from database
         try:
-            if self.cur is not None:
-                self.cur.close()
-                self.cur = None
-            if self.conn is not None:
-                self.conn.close()
-                self.conn = None
+            self.cur.close()
+            self.cur = None
+
+            self.conn.close()
+            self.conn = None
             return True
         except Exception as e:
             raise e
