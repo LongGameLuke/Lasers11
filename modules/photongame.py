@@ -132,7 +132,13 @@ class PhotonGame:
             tagger.score += self.POINTS_PLAYER_TAG
 
             log_game_event(f"{tagger.name} >>> {tagged.name}")
-            self.game_events.append(f"{tagger.name} tagged {tagged.name}")
+            self.game_events.append({
+                "type": "tag",
+                "tagger_name": tagger.name,
+                "tagger_team": tagger.team,
+                "tagged_name": tagged.name,
+                "tagged_team": tagged.team,
+            })
             self.server.broadcast_tagged(tagged.equipment_id)
         else:
             # friendly fire event
@@ -140,7 +146,13 @@ class PhotonGame:
             tagged.score -= self.POINTS_PLAYER_TAG
 
             log_game_event(f"{tagger.name} >>> {tagged.name}")
-            self.game_events.append(f"{tagger.name} friendly fired on {tagged.name}")
+            self.game_events.append({
+                "type": "friendly_fire",
+                "tagger_name": tagger.name,
+                "tagger_team": tagger.team,
+                "tagged_name": tagged.name,
+                "tagged_team": tagged.team,
+            })
             self.server.broadcast_tagged(tagged.equipment_id)
             self.server.broadcast_tagged(tagger.equipment_id)
 
@@ -165,11 +177,21 @@ class PhotonGame:
             tagger.score += self.POINTS_BASE_TAG
             tagger.base_tag = True
             log_game_event(f"{tagger.name} >>> Green Base")
-            self.game_events.append(f"{tagger.name} tagged Green Base")
+            self.game_events.append({
+                "type": "base_tag",
+                "tagger_name": tagger.name,
+                "tagger_team": tagger.team,
+                "base_team": "Green",
+            })
             self.server.broadcast_tagged(int(SERVER_CODES.GREEN_BASE_HIT.value))
         elif tagger.team == "Green" and base_code == int(SERVER_CODES.RED_BASE_HIT.value):
             tagger.score += self.POINTS_BASE_TAG
             tagger.base_tag = True
             log_game_event(f"{tagger.name} >>> Red Base")
-            self.game_events.append(f"{tagger.name} tagged Red Base")
+            self.game_events.append({
+                "type": "base_tag",
+                "tagger_name": tagger.name,
+                "tagger_team": tagger.team,
+                "base_team": "Red",
+            })
             self.server.broadcast_tagged(int(SERVER_CODES.RED_BASE_HIT.value))

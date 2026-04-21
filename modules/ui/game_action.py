@@ -104,11 +104,8 @@ class GameAction(Scene):
         recent_events = self.game.game_events[-10:]
         for i, e in enumerate(recent_events):
             y = events_y + (margin * 2) + (i * 30)
-            if i == len(recent_events) - 1:
-                text = f"> {e}"
-            else:
-                text = str(e)
-            self.draw_text(text, self.status_font, YELLOW, events_x + events_width // 2, y, center=True)
+            is_latest = (i == len(recent_events) - 1)
+            self.draw_event(e, events_x + events_width // 2, y, is_latest)
 
     def draw_score_pane(self, x, y, w, h, color, label, score):
         pygame.draw.rect(self.screen, color, (x, y, w, h), 3)
@@ -145,6 +142,48 @@ class GameAction(Scene):
                 if event.key == pygame.K_F5 or event.key == pygame.K_ESCAPE:
                     self.game.end_game(kill_music=True)
                     self.manager.switch("PLAYER_ENTRY")
+
+    def team_color(self, team):
+        if team == "Red":
+            return RED
+        if team == "Green":
+            return LIGHT_GREEN
+        return WHITE
+    
+    def draw_event(self, event, center_x, y, is_latest):
+        if not isinstance(event, dict):
+            prefix = "> " if is_latest else ""
+            self.draw_text(prefix + str(event), self.status_font, WHITE, center_x, y, center=True)
+            return
+        
+        font = self.status_font
+        etype = event.get("type")
+
+        segments = []
+        if is_latest:
+            segments.append(("> ", WHITE))
+        
+        if etype == "tag":
+            segments.append((event["tagger_name"], self.team_color(event["tagger_team"])))
+            segments.append((" tagged ", WHITE))
+            segments.append((event["tagged_name"], self.team_color(event["tagged_team"])))
+        elif etype == "friendly_fire":
+            segments.append((event["tagger_name"], self.team_color(event["tagger_team"])))
+            segments.append((" friendly fired on ", WHITE))
+            segments.append((event["tagged_name"], self.team_color(event["tagged_team"])))
+        elif etype == "base_tag":
+            segments.append((event["tagger_name"], self.team_color(event["tagger_team"])))
+            segments.append((" tagged ", WHITE))
+            segments.append((f"{event['base_team']} Base", self.team_color(event["base_team"])))
+        else:
+            segments.append((str(event), WHITE))
+
+        surfaces = [font.render(text, True, color) for text, color in segments]
+        total_width = sum(s.get_width() for s in surfaces)
+        cursor = center_x - total_width // 2
+        for s in surfaces:
+            self.screen.blit(s, (cursor, y - s.get_height() // 2))
+            cursor += s.get_width()
 
     def draw_text(self, text, font, color, x, y, center=False):
         surf = font.render(str(text), True, color)
